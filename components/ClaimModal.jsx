@@ -84,12 +84,12 @@ export default function ClaimModal({ item, onClose }) {
             <div className="tee-3d">
               {/* Front face */}
               <div className="tee-face">
-                <img src="/pics/shirtfront.jfif" alt="MOGI Drop 0 shirt — front" />
+                <img src="/pics/shirtfront-Photoroom.png" alt="MOGI Drop 0 shirt — front" />
                 <div className="tee-badge">#{item.num}/20 · FRONT</div>
               </div>
               {/* Back face */}
               <div className="tee-face tee-face-back">
-                <img src="/pics/shirtback.jfif" alt="MOGI Drop 0 shirt — back" />
+                <img src="/pics/shirtback-Photoroom.png" alt="MOGI Drop 0 shirt — back" />
                 <div className="tee-badge">BACK · HKD 380</div>
               </div>
             </div>

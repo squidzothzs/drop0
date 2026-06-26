@@ -20,43 +20,38 @@ export default function MarketplaceView() {
   return (
     <div className="market-root">
 
-      {/* ── Fixed left mascot column — all 3 images, never scrolls ── */}
+      {/* ── Floating icons top-right (not a bar) ── */}
+      <div className="market-float-icons">
+        <svg viewBox="0 0 24 24" aria-label="Account"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <svg viewBox="0 0 24 24" aria-label="Bag"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      </div>
+
+      {/* ── Fixed left mascot column ── */}
       <aside className="mascot-col left" aria-hidden="true">
         <img src="/pics/pic1.png" alt="" draggable="false" />
         <img src="/pics/pic2.png" alt="" draggable="false" />
         <img src="/pics/pic3.png" alt="" draggable="false" />
       </aside>
 
-      {/* ── Fixed right mascot column — all 3 images, never scrolls ── */}
+      {/* ── Fixed right mascot column ── */}
       <aside className="mascot-col right" aria-hidden="true">
         <img src="/pics/pic1.png" alt="" draggable="false" />
         <img src="/pics/pic2.png" alt="" draggable="false" />
         <img src="/pics/pic3.png" alt="" draggable="false" />
       </aside>
 
-      {/* ── Scrollable main content — indented by mascot column width ── */}
+      {/* ── Scrollable main content ── */}
       <div className="market-content">
 
-        {/* MOGI banner — scrolls away with the page */}
-        <header className="market-drop-header">
-          <div className="market-drop-title">MOGI</div>
-          <div className="market-drop-sub">Drop 0 · heavyweight · limited to 20</div>
-          <div className="market-status">
-            {isSoldOut ? (
-              <>
-                <span className="status-dot grey" />
-                <span style={{ color: 'var(--grey)' }}>SOLD OUT · 0 of 20</span>
-              </>
-            ) : (
-              <>
-                <span className="status-dot" />
-                <span style={{ color: 'var(--heat)' }}>{remainingCount} left of 20</span>
-              </>
-            )}
-          </div>
-        </header>
+        <div className="market-page-title">MOGI</div>
 
-        {/* Product grid */}
+        <div className="market-status-strip">
+          <span className={`status-dot${isSoldOut ? ' grey' : ''}`} />
+          {isSoldOut
+            ? 'SOLD OUT · 0 OF 20'
+            : `${remainingCount} LEFT OF 20 · DROP 0`}
+        </div>
+
         <main className="market-grid-wrap">
           <div className="market-grid">
             {items.map(item => (
@@ -69,11 +64,11 @@ export default function MarketplaceView() {
               textAlign: 'center',
               padding: '32px 16px',
               fontFamily: 'var(--font-mono)',
-              fontSize: 11,
+              fontSize: 10,
               color: 'var(--grey)',
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              borderTop: '1px solid var(--line)',
+              borderTop: '1px solid #f0f0f0',
               marginTop: 24,
             }}>
               all 20 pieces are claimed · permanent registry below
