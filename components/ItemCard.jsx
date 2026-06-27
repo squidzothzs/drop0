@@ -51,12 +51,10 @@ export default function ItemCard({ item, onClick }) {
 
         <span className="card-name">MOGI #{num} / 20</span>
 
-        {isTaken ? (
+        {isTaken && (
           claimer
             ? <div className="card-claimer">held by {claimer}</div>
             : <div className="card-claimer">spoken for</div>
-        ) : (
-          <div className="card-price">HKD 380</div>
         )}
 
         {watchers > 0 && isClaiming && (

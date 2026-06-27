@@ -1,25 +1,21 @@
 'use client'
+import { useState } from 'react'
 import { useStore, StoreProvider } from '../lib/useStore'
 import SiteClosedView from '../components/SiteClosedView'
 import LiveView from '../components/LiveView'
 import MarketplaceView from '../components/MarketplaceView'
 
 function App() {
-  const { state, dispatch } = useStore()
-  const { appState } = state
+  const { appState } = useStore().state
+  const [entered, setEntered] = useState(false) // per-visitor: passed the LIVE gate
 
-  const goToLive        = () => dispatch({ type: 'SET_APP_STATE', payload: 'live' })
-  const goToMarketplace = () => dispatch({ type: 'SET_APP_STATE', payload: 'marketplace' })
+  // status is set from the admin panel and shared across all visitors
+  if (appState === 'siteClosed') return <SiteClosedView />
 
-  if (appState === 'siteClosed') {
-    return <SiteClosedView onEnter={goToLive} />
-  }
+  // 'open' shows the LIVE gate first, then the shop once they enter
+  if (appState === 'marketplace' && !entered) return <LiveView onEnter={() => setEntered(true)} />
 
-  if (appState === 'live') {
-    return <LiveView onEnter={goToMarketplace} />
-  }
-
-  // marketplace + soldOut both render MarketplaceView (soldOut is a sub-state)
+  // marketplace (entered) + soldOut both render MarketplaceView (soldOut is a sub-state)
   return <MarketplaceView />
 }
 

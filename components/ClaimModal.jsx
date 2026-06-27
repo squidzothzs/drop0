@@ -13,7 +13,7 @@ function fmt(secs) {
 }
 
 export default function ClaimModal({ item, onClose }) {
-  const { dispatch } = useStore()
+  const { startClaim, confirmClaim, releaseClaim } = useStore()
   const [step, setStep] = useState(1)  // 1 | 2 | 3
   const [showBack, setShowBack] = useState(false)
   const [name, setName] = useState('')
@@ -22,9 +22,19 @@ export default function ClaimModal({ item, onClose }) {
   const [showIg, setShowIg] = useState(true)
   const [remaining, setRemaining] = useState(COUNTDOWN_SECS)
   const [expired, setExpired] = useState(false)
+  const [gone, setGone] = useState(false)   // someone claimed it first
+  const [busy, setBusy] = useState(false)
+  const [reserved, setReserved] = useState(false) // we already hold the reservation
   const timerRef = useRef(null)
 
-  // start countdown on step 3
+  // lock background scroll while the modal is open
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [])
+
+  // start countdown on step 3 (cosmetic — server cron is the real authority)
   useEffect(() => {
     if (step !== 3) return
     timerRef.current = setInterval(() => {
@@ -32,41 +42,44 @@ export default function ClaimModal({ item, onClose }) {
         if (r <= 1) {
           clearInterval(timerRef.current)
           setExpired(true)
-          dispatch({ type: 'CANCEL_CLAIM', id: item.id })
+          releaseClaim(item.id)
           return 0
         }
         return r - 1
       })
     }, 1000)
     return () => clearInterval(timerRef.current)
-  }, [step, item.id, dispatch])
+  }, [step, item.id, releaseClaim])
 
-  const handleConfirm = useCallback(() => {
-    if (!name.trim()) return
+  const handleConfirm = useCallback(async () => {
+    if (!name.trim() || busy) return
+    setBusy(true)
+    const { ok } = await confirmClaim(item.id, { name: name.trim(), ig: ig.trim(), showIg, size })
+    setBusy(false)
+    if (!ok) { setGone(true); return } // reservation lapsed before confirming
     playSuccess()
-    dispatch({
-      type: 'CONFIRM_CLAIM',
-      id: item.id,
-      holder: name.trim(),
-      ig: ig.trim(),
-      showIg,
-      size,
-    })
     setStep(3)
-  }, [name, ig, showIg, size, item.id, dispatch])
+  }, [name, ig, showIg, size, item.id, confirmClaim, busy])
 
   const handleClose = useCallback(() => {
-    if (step < 3 || expired) {
-      dispatch({ type: 'CANCEL_CLAIM', id: item.id })
+    // release only an unconfirmed/expired reservation; a paid-pending claim stays
+    if ((step < 3 || expired) && !gone) {
+      releaseClaim(item.id)
     }
     onClose()
-  }, [step, expired, item.id, dispatch, onClose])
+  }, [step, expired, gone, item.id, releaseClaim, onClose])
 
-  const handleStep1Yes = useCallback(() => {
+  const handleStep1Yes = useCallback(async () => {
+    if (busy) return
+    if (reserved) { playOpen(); setStep(2); return } // came back — keep the reservation
+    setBusy(true)
+    const { ok } = await startClaim(item.id)
+    setBusy(false)
+    if (!ok) { setGone(true); return } // someone beat them to it
+    setReserved(true)
     playOpen()
-    dispatch({ type: 'START_CLAIM', id: item.id })
     setStep(2)
-  }, [item.id, dispatch])
+  }, [item.id, startClaim, busy, reserved])
 
   return (
     <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
@@ -88,23 +101,37 @@ export default function ClaimModal({ item, onClose }) {
         </div>
         <div className="tee-hint">{showBack ? 'back' : 'front'} · tap to turn</div>
 
+        {/* ── GONE — someone claimed it first ── */}
+        {gone && (
+          <div className="claim-step">
+            <h2 className="claim-headline">Gone</h2>
+            <p className="claim-body">
+              #{item.num} was just taken by someone else. Twenty exist — pick another number while they last.
+            </p>
+            <button className="claim-btn solid" onClick={() => { playClick(); handleClose() }}>Back to the drop</button>
+          </div>
+        )}
+
         {/* ── STEP 1 — THE INVITATION ── */}
-        {step === 1 && (
+        {!gone && step === 1 && (
           <div className="claim-step">
             <h2 className="claim-headline">Piece #{item.num}</h2>
+            <div className="claim-price">HKD 380</div>
             <p className="claim-body">
               Twenty exist. No restock, no reprint, no second chance.
               Claim this number and it's struck from the drop — permanently, provably yours.
             </p>
             <div className="claim-btn-row">
               <button className="claim-btn ghost" onClick={() => { playClick(); handleClose() }}>Not this one</button>
-              <button className="claim-btn solid" onClick={handleStep1Yes}>Claim #{item.num}</button>
+              <button className="claim-btn solid" onClick={handleStep1Yes} disabled={busy}>
+                {busy ? 'Claiming…' : `Claim #${item.num}`}
+              </button>
             </div>
           </div>
         )}
 
         {/* ── STEP 2 — YOUR DETAILS ── */}
-        {step === 2 && (
+        {!gone && step === 2 && (
           <div className="claim-step">
             <h2 className="claim-headline">Stake your name</h2>
             <p className="claim-body">
@@ -138,14 +165,14 @@ export default function ClaimModal({ item, onClose }) {
                 Show my @ on the piece so people know who got it
               </label>
               <div className="claim-btn-row" style={{ marginTop: 4 }}>
-                <button className="claim-btn ghost" onClick={() => { playClick(); setStep(1) }}>← Back</button>
+                <button className="claim-btn ghost" onClick={() => { playClick(); setStep(1) }} disabled={busy}>← Back</button>
                 <button
                   className="claim-btn solid"
                   onClick={handleConfirm}
-                  disabled={!name.trim()}
-                  style={{ opacity: name.trim() ? 1 : 0.45 }}
+                  disabled={!name.trim() || busy}
+                  style={{ opacity: name.trim() && !busy ? 1 : 0.45 }}
                 >
-                  Lock in #{item.num}
+                  {busy ? 'Locking in…' : `Lock in #${item.num}`}
                 </button>
               </div>
             </div>

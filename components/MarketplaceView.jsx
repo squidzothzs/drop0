@@ -5,7 +5,7 @@ import ItemCard from './ItemCard'
 import ClaimModal from './ClaimModal'
 
 export default function MarketplaceView() {
-  const { state, dispatch } = useStore()
+  const { state } = useStore()
   const { items, remainingCount, appState } = state
   const isSoldOut = appState === 'soldOut'
   const [activeItem, setActiveItem] = useState(null)
@@ -76,26 +76,6 @@ export default function MarketplaceView() {
           )}
         </main>
       </div>
-
-      {/* Dev admin bar */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="admin-bar">
-          <span>DEV:</span>
-          <button onClick={() => {
-            const avail = items.find(i => i.status === 'available')
-            if (avail) dispatch({ type: 'MARK_PAID', id: avail.id })
-          }}>mark next sold</button>
-          <button onClick={() => {
-            const avail = items.find(i => i.status === 'available')
-            if (avail) dispatch({
-              type: 'CONFIRM_CLAIM', id: avail.id,
-              holder: 'test_user', ig: '@test', showIg: true, size: 'M',
-            })
-          }}>sim claim</button>
-          <button onClick={() => dispatch({ type: 'RESET' })}>reset</button>
-          <span style={{ marginLeft: 'auto', opacity: 0.6 }}>{remainingCount}/20 remaining</span>
-        </div>
-      )}
 
       {activeItem && (
         <ClaimModal item={activeItem} onClose={handleModalClose} />

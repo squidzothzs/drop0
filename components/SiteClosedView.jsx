@@ -1,7 +1,7 @@
 'use client'
 import { useState, useRef, useCallback } from 'react'
 import FloatingTees from './FloatingTees'
-import { playDeny, playClick } from '../lib/audio'
+import { playDeny } from '../lib/audio'
 
 const TITLE_A = 'SITE CLOSED'
 const TITLE_B = 'STILL CLOSED'
@@ -9,7 +9,7 @@ const TITLE_B = 'STILL CLOSED'
 const ROTATIONS = ['-25deg','18deg','-40deg','30deg','-15deg','22deg','-35deg','28deg','-20deg','32deg','-12deg']
 const ROTATIONS2 = ['-55deg','48deg','-70deg','60deg','-45deg','52deg','-65deg','58deg','-50deg','62deg','-42deg']
 
-export default function SiteClosedView({ onEnter }) {
+export default function SiteClosedView() {
   const [clicks, setClicks] = useState(0)
   const [shaking, setShaking] = useState(false)
   const [redFlash, setRedFlash] = useState(false)
@@ -100,15 +100,6 @@ export default function SiteClosedView({ onEnter }) {
         <div className="closed-sub" style={{ marginTop: 8, fontSize: 9 }}>
           not yet · not yet · not yet · not yet
         </div>
-
-        {/* DEV SHORTCUT — remove before deploy */}
-        <button
-          className="btn"
-          style={{ marginTop: 24, fontSize: 9, opacity: 0.35 }}
-          onClick={() => { playClick(); onEnter() }}
-        >
-          [DEV] force open
-        </button>
       </div>
     </>
   )

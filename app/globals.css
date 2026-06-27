@@ -511,10 +511,13 @@ body {
 }
 .card-taken .card-name { color: #888; }
 
-.card-price {
+/* price shown only inside the claim modal */
+.claim-price {
   font-family: var(--font-mono);
-  font-size: 11px;
-  color: #111;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  color: #fff;
+  text-align: center;
 }
 
 /* who claimed it — IG handle shown on the piece */
