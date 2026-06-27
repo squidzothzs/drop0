@@ -15,10 +15,11 @@ function fmt(secs) {
 export default function ClaimModal({ item, onClose }) {
   const { dispatch } = useStore()
   const [step, setStep] = useState(1)  // 1 | 2 | 3
+  const [showBack, setShowBack] = useState(false)
   const [name, setName] = useState('')
   const [size, setSize] = useState('M')
   const [ig, setIg] = useState('')
-  const [showIg, setShowIg] = useState(false)
+  const [showIg, setShowIg] = useState(true)
   const [remaining, setRemaining] = useState(COUNTDOWN_SECS)
   const [expired, setExpired] = useState(false)
   const timerRef = useRef(null)
@@ -69,163 +70,126 @@ export default function ClaimModal({ item, onClose }) {
 
   return (
     <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
-      <div className="modal-window" role="dialog" aria-modal="true" aria-label={`Claim MOGI #${item.num}/20`}>
+      <div className="claim-card" role="dialog" aria-modal="true" aria-label={`Claim MOGI #${item.num}/20`}>
 
-        {/* Win98 title bar */}
-        <div className="modal-titlebar">
-          <span>MOGI #{item.num}/20 — Claim Window</span>
-          <button className="modal-close-btn" onClick={handleClose} aria-label="Close">✕</button>
+        <button className="claim-close" onClick={handleClose} aria-label="Close">✕</button>
+        <div className="claim-eyebrow">MOGI · DROP 0 · ONE OF TWENTY</div>
+
+        {/* 3D shirt — tap to turn */}
+        <div className="tee-3d-wrap" onClick={() => setShowBack(b => !b)} title="Tap to turn">
+          <div className={`tee-3d${showBack ? ' tee-showing-back' : ''}`}>
+            <div className="tee-face">
+              <img src="/pics/shirtfront-Photoroom.png" alt="MOGI Drop 0 shirt — front" />
+            </div>
+            <div className="tee-face tee-face-back">
+              <img src="/pics/shirtback-Photoroom2.png" alt="MOGI Drop 0 shirt — back" />
+            </div>
+          </div>
         </div>
+        <div className="tee-hint">{showBack ? 'back' : 'front'} · tap to turn</div>
 
-        <div className="modal-body">
+        {/* ── STEP 1 — THE INVITATION ── */}
+        {step === 1 && (
+          <div className="claim-step">
+            <h2 className="claim-headline">Piece #{item.num}</h2>
+            <p className="claim-body">
+              Twenty exist. No restock, no reprint, no second chance.
+              Claim this number and it's struck from the drop — permanently, provably yours.
+            </p>
+            <div className="claim-btn-row">
+              <button className="claim-btn ghost" onClick={() => { playClick(); handleClose() }}>Not this one</button>
+              <button className="claim-btn solid" onClick={handleStep1Yes}>Claim #{item.num}</button>
+            </div>
+          </div>
+        )}
 
-          {/* 3D shirt — hover to flip front → back */}
-          <div className="tee-3d-wrap" title="Hover to flip">
-            <div className="tee-3d">
-              {/* Front face */}
-              <div className="tee-face">
-                <img src="/pics/shirtfront-Photoroom.png" alt="MOGI Drop 0 shirt — front" />
-                <div className="tee-badge">#{item.num}/20 · FRONT</div>
+        {/* ── STEP 2 — YOUR DETAILS ── */}
+        {step === 2 && (
+          <div className="claim-step">
+            <h2 className="claim-headline">Stake your name</h2>
+            <p className="claim-body">
+              This goes on the permanent registry beneath the drop. Make it count.
+            </p>
+            <div className="claim-form">
+              <div className="claim-field">
+                <label className="claim-label" htmlFor="claim-name">Name *</label>
+                <input
+                  id="claim-name" className="claim-input" type="text" maxLength={32}
+                  placeholder="how the registry remembers you"
+                  value={name} onChange={e => setName(e.target.value)} autoFocus
+                />
               </div>
-              {/* Back face */}
-              <div className="tee-face tee-face-back">
-                <img src="/pics/shirtback-Photoroom.png" alt="MOGI Drop 0 shirt — back" />
-                <div className="tee-badge">BACK · HKD 380</div>
+              <div className="claim-field">
+                <label className="claim-label" htmlFor="claim-size">Size *</label>
+                <select id="claim-size" className="claim-input" value={size} onChange={e => setSize(e.target.value)}>
+                  {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div className="claim-field">
+                <label className="claim-label" htmlFor="claim-ig">Instagram</label>
+                <input
+                  id="claim-ig" className="claim-input" type="text" maxLength={32}
+                  placeholder="@handle"
+                  value={ig} onChange={e => setIg(e.target.value)}
+                />
+              </div>
+              <label className="claim-toggle">
+                <input type="checkbox" checked={showIg} onChange={e => setShowIg(e.target.checked)} />
+                Show my @ on the piece so people know who got it
+              </label>
+              <div className="claim-btn-row" style={{ marginTop: 4 }}>
+                <button className="claim-btn ghost" onClick={() => { playClick(); setStep(1) }}>← Back</button>
+                <button
+                  className="claim-btn solid"
+                  onClick={handleConfirm}
+                  disabled={!name.trim()}
+                  style={{ opacity: name.trim() ? 1 : 0.45 }}
+                >
+                  Lock in #{item.num}
+                </button>
               </div>
             </div>
           </div>
+        )}
 
-          {/* ── STEP 1 ── */}
-          {step === 1 && (
-            <>
-              <div className="modal-step-label">step 1 of 2 — confirm</div>
-              <p className="modal-question">
-                Claim #{item.num}/20?<br />
-                <span style={{ fontSize: 11, color: 'var(--grey)', fontWeight: 'normal' }}>
-                  This reserves your piece. You have 30 minutes to pay via DM.
-                </span>
-              </p>
-              <div className="modal-btn-row">
-                <button className="btn" onClick={() => { playClick(); handleClose() }}>Not yet</button>
-                <button className="btn btn-primary" onClick={handleStep1Yes}>Yes, claim it</button>
-              </div>
-            </>
-          )}
-
-          {/* ── STEP 2 ── */}
-          {step === 2 && (
-            <>
-              <div className="modal-step-label">step 2 of 2 — your details</div>
-              <div className="modal-form">
-                <div className="form-field">
-                  <label className="form-label" htmlFor="claim-name">Display name *</label>
-                  <input
-                    id="claim-name"
-                    className="form-input"
-                    type="text"
-                    maxLength={32}
-                    placeholder="shown on the registry"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    autoFocus
-                  />
-                </div>
-
-                <div className="form-field">
-                  <label className="form-label" htmlFor="claim-size">Size *</label>
-                  <select
-                    id="claim-size"
-                    className="form-select"
-                    value={size}
-                    onChange={e => setSize(e.target.value)}
-                  >
-                    {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-
-                <div className="form-field">
-                  <label className="form-label" htmlFor="claim-ig">Instagram handle</label>
-                  <input
-                    id="claim-ig"
-                    className="form-input"
-                    type="text"
-                    maxLength={32}
-                    placeholder="@handle (optional)"
-                    value={ig}
-                    onChange={e => setIg(e.target.value)}
-                  />
-                </div>
-
-                <label className="form-toggle">
-                  <input
-                    type="checkbox"
-                    checked={showIg}
-                    onChange={e => setShowIg(e.target.checked)}
-                  />
-                  Show my IG so people can find me
-                </label>
-
-                <div className="modal-btn-row" style={{ marginTop: 4 }}>
-                  <button className="btn" onClick={() => { playClick(); setStep(1) }}>← Back</button>
-                  <button
-                    className="btn btn-gold"
-                    onClick={handleConfirm}
-                    disabled={!name.trim()}
-                    style={{ opacity: name.trim() ? 1 : 0.5 }}
-                  >
-                    Lock it in
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* ── STEP 3 (SUCCESS) ── */}
-          {step === 3 && (
-            <>
-              <div className="modal-step-label">
-                {expired ? '⚠ time expired — slot released' : 'claimed — pay within 30 minutes'}
-              </div>
-
-              {expired ? (
-                <p className="modal-question" style={{ color: 'var(--heat)' }}>
-                  Your 30 minutes are up.<br />
-                  <span style={{ fontSize: 11, fontWeight: 'normal', color: 'var(--grey)' }}>
-                    Your claim was released. Tap "Back" to try again.
-                  </span>
+        {/* ── STEP 3 — IT'S YOURS ── */}
+        {step === 3 && (
+          <div className="claim-step">
+            {expired ? (
+              <>
+                <h2 className="claim-headline">Released</h2>
+                <p className="claim-body">
+                  Your window closed. #{item.num} is back on the floor for someone else to take.
                 </p>
-              ) : (
-                <div className="success-panel">
-                  <div className="success-label">your edition number</div>
-                  <div className="success-edition">#{item.num}/20</div>
-                  <div className="success-label">time to pay</div>
-                  <div className="countdown-box">{fmt(remaining)}</div>
-                  <div className="countdown-sub">minutes remaining · do not close this tab</div>
-                </div>
-              )}
-
-              {!expired && (
+                <button
+                  className="claim-btn solid"
+                  onClick={() => { setStep(1); setExpired(false); setRemaining(COUNTDOWN_SECS) }}
+                >
+                  Try for it again
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="claim-eyebrow" style={{ marginBottom: 0 }}>this number is now yours</div>
+                <div className="claim-edition">#{item.num}<span>/20</span></div>
+                <div className="claim-count">{fmt(remaining)}</div>
+                <p className="claim-body" style={{ textAlign: 'center' }}>
+                  Settle within thirty minutes or it returns to the floor. Keep this tab open.
+                </p>
                 <a
-                  className="btn btn-primary"
+                  className="claim-btn solid"
                   href="https://www.instagram.com/mogi.exists/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ textAlign: 'center', textDecoration: 'none', display: 'block' }}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{ textAlign: 'center', textDecoration: 'none' }}
                   onClick={playClick}
                 >
-                  DM @mogi.exists to pay now ↗
+                  DM @mogi.exists to settle ↗
                 </a>
-              )}
+              </>
+            )}
+          </div>
+        )}
 
-              {expired && (
-                <button className="btn" onClick={() => { setStep(1); setExpired(false); setRemaining(COUNTDOWN_SECS) }}>
-                  ← Try again
-                </button>
-              )}
-            </>
-          )}
-
-        </div>
       </div>
     </div>
   )
