@@ -19,7 +19,7 @@ export default function ClaimModal({ item, onClose }) {
   const [name, setName] = useState('')
   const [size, setSize] = useState('M')
   const [ig, setIg] = useState('')
-  const [showIg, setShowIg] = useState(true)
+  const [showIg, setShowIg] = useState(false) // default anonymous; tick to show IG
   const [remaining, setRemaining] = useState(COUNTDOWN_SECS)
   const [expired, setExpired] = useState(false)
   const [gone, setGone] = useState(false)   // someone claimed it first
@@ -152,18 +152,20 @@ export default function ClaimModal({ item, onClose }) {
                   {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
-              <div className="claim-field">
-                <label className="claim-label" htmlFor="claim-ig">Instagram</label>
-                <input
-                  id="claim-ig" className="claim-input" type="text" maxLength={32}
-                  placeholder="@handle"
-                  value={ig} onChange={e => setIg(e.target.value)}
-                />
-              </div>
               <label className="claim-toggle">
                 <input type="checkbox" checked={showIg} onChange={e => setShowIg(e.target.checked)} />
-                Show my @ on the piece so people know who got it
+                Show my Instagram on the piece — otherwise it reads “held by anonymous”
               </label>
+              {showIg && (
+                <div className="claim-field">
+                  <label className="claim-label" htmlFor="claim-ig">Instagram</label>
+                  <input
+                    id="claim-ig" className="claim-input" type="text" maxLength={32}
+                    placeholder="@handle"
+                    value={ig} onChange={e => setIg(e.target.value)} autoFocus
+                  />
+                </div>
+              )}
               <div className="claim-btn-row" style={{ marginTop: 4 }}>
                 <button className="claim-btn ghost" onClick={() => { playClick(); setStep(1) }} disabled={busy}>← Back</button>
                 <button

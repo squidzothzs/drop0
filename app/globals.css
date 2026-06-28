@@ -391,8 +391,9 @@ body {
   transition: opacity 0.15s;
   overflow: hidden;
 }
-.item-card:hover:not(.card-taken) { opacity: 0.82; }
-.item-card.card-taken { cursor: default; }
+.item-card:hover:not(.card-sold):not(.card-reserved) { opacity: 0.82; }
+.item-card.card-sold,
+.item-card.card-reserved { cursor: default; }
 
 .card-thumb {
   width: 100%;
@@ -410,7 +411,8 @@ body {
   will-change: transform;
 }
 
-.item-card:not(.card-taken) .card-thumb-3d {
+/* only live (available) pieces spin; reserved/sold sit frozen */
+.item-card:not(.card-sold):not(.card-reserved) .card-thumb-3d {
   animation: card-spin 4s linear infinite;
 }
 
@@ -435,9 +437,11 @@ body {
   object-fit: contain;
   display: block;
 }
-.card-taken .card-face img { filter: grayscale(1) opacity(0.45); }
+/* sold = drained of colour and struck out · reserved = colour kept but dimmed */
+.card-sold     .card-face img { filter: grayscale(1) opacity(0.4); }
+.card-reserved .card-face img { opacity: 0.5; }
 
-/* crossed-out ✕ over a claimed piece — corner-to-corner */
+/* crossed-out ✕ over a SOLD piece — corner-to-corner, thick and clean */
 .taken-cross {
   position: absolute;
   inset: 0;
@@ -445,32 +449,18 @@ body {
   pointer-events: none;
   background:
     linear-gradient(to top right,
-      transparent calc(50% - 1px), #111 calc(50% - 1px),
-      #111 calc(50% + 1px), transparent calc(50% + 1px)),
+      transparent calc(50% - 2.5px), #111 calc(50% - 2.5px),
+      #111 calc(50% + 2.5px), transparent calc(50% + 2.5px)),
     linear-gradient(to bottom right,
-      transparent calc(50% - 1px), #111 calc(50% - 1px),
-      #111 calc(50% + 1px), transparent calc(50% + 1px));
+      transparent calc(50% - 2.5px), #111 calc(50% - 2.5px),
+      #111 calc(50% + 2.5px), transparent calc(50% + 2.5px));
 }
 
-/* claiming bubble */
-.heat-bubble {
-  position: absolute;
-  top: 8px; right: 8px;
-  background: var(--heat);
-  color: #fff;
-  font-size: 8px;
-  font-family: var(--font-mono);
-  font-weight: 900;
-  padding: 3px 7px;
-  border-radius: 2px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  z-index: 3;
-  animation: bubble-pulse 1.2s ease-in-out infinite;
-}
-@keyframes bubble-pulse {
+/* reserved pieces pulse softly so "being claimed" reads as live, not dead */
+.card-reserved .card-thumb { animation: reserved-pulse 1.6s ease-in-out infinite; }
+@keyframes reserved-pulse {
   0%,100% { opacity: 1; }
-  50%      { opacity: 0.5; }
+  50%     { opacity: 0.72; }
 }
 
 /* card body */
@@ -495,8 +485,8 @@ body {
   line-height: 1.2;
 }
 .badge-avail  { background: #111; }
-.badge-taken  { background: #111; }
-.badge-claim  { background: var(--heat); }
+.badge-claim  { background: var(--amber); }  /* reserved / being claimed */
+.badge-sold   { background: #111; }          /* permanently claimed */
 
 .card-name {
   font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
@@ -509,7 +499,8 @@ body {
   margin-bottom: 4px;
   display: block;
 }
-.card-taken .card-name { color: #888; }
+.card-sold .card-name,
+.card-reserved .card-name { color: #888; }
 
 /* price shown only inside the claim modal */
 .claim-price {
@@ -528,13 +519,6 @@ body {
   color: #111;
   margin-top: 2px;
   word-break: break-word;
-}
-
-.card-holder {
-  font-size: 9px;
-  font-family: var(--font-mono);
-  color: var(--grey);
-  margin-top: 3px;
 }
 
 /* ─── CLAIM MODAL (editorial) ───────────────────────── */
@@ -589,12 +573,13 @@ body {
 }
 .claim-close:hover { opacity: 1; }
 
+/* one muted tone for all supporting copy — no opacity soup */
 .claim-eyebrow {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #888;
+  color: #ccc;
   text-align: center;
   margin-bottom: 16px;
 }
@@ -639,7 +624,7 @@ body {
 .tee-hint {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: #888;
+  color: #ccc;
   letter-spacing: 0.14em;
   text-align: center;
   text-transform: uppercase;
@@ -667,7 +652,7 @@ body {
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.7;
-  color: #c4c4c4;
+  color: #ccc;
   text-align: center;
 }
 
@@ -701,7 +686,7 @@ body {
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #999;
+  color: #ccc;
 }
 .claim-input {
   font-family: var(--font-mono);
@@ -727,7 +712,7 @@ select.claim-input option { background: #0d0d0d; color: #fff; }
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.55;
-  color: #c4c4c4;
+  color: #ccc;
   cursor: pointer;
   user-select: none;
 }

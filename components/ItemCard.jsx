@@ -3,15 +3,14 @@ import { useCallback } from 'react'
 import { playClick } from '../lib/audio'
 
 export default function ItemCard({ item, onClick }) {
-  const { num, status, holder, holderIg, showIg, watchers } = item
+  const { num, status, holder, holderIg, showIg } = item
   const isSold      = status === 'soldPaid'
-  const isClaiming  = status === 'claiming'
-  const isUnpaid    = status === 'claimedUnpaid'
   const isAvailable = status === 'available'
-  const isTaken     = isUnpaid || isSold
+  const isReserved  = status === 'claiming' || status === 'claimedUnpaid' // unclickable, no cross
+  const hasHolder   = !!holder
 
-  // who got it — prefer shared IG, fall back to display name
-  const claimer = showIg && holderIg ? holderIg : holder
+  // shown on the piece: the @ if they opted in, otherwise anonymous
+  const claimer = showIg && holderIg ? holderIg : 'anonymous'
 
   const handleClick = useCallback(() => {
     if (!isAvailable) return
@@ -21,12 +20,12 @@ export default function ItemCard({ item, onClick }) {
 
   return (
     <div
-      className={`item-card${isTaken ? ' card-taken' : ''}`}
+      className={`item-card${isSold ? ' card-sold' : ''}${isReserved ? ' card-reserved' : ''}`}
       onClick={handleClick}
       role={isAvailable ? 'button' : undefined}
       tabIndex={isAvailable ? 0 : undefined}
       onKeyDown={isAvailable ? e => e.key === 'Enter' && handleClick() : undefined}
-      aria-label={isAvailable ? `Claim MOGI #${num}/20` : `MOGI #${num}/20 — claimed`}
+      aria-label={isAvailable ? `Claim MOGI #${num}/20` : `MOGI #${num}/20 — ${isSold ? 'claimed' : 'being claimed'}`}
     >
       <div className="card-thumb">
         <div className="card-thumb-3d">
@@ -37,29 +36,22 @@ export default function ItemCard({ item, onClick }) {
             <img src="/pics/shirtback-Photoroom2.png" alt={`MOGI #${num}/20 back`} loading="lazy" />
           </div>
         </div>
-        {isClaiming && <div className="heat-bubble">someone's claiming…</div>}
-        {isTaken && <div className="taken-cross" aria-hidden="true" />}
+        {isSold && <div className="taken-cross" aria-hidden="true" />}
       </div>
 
       <div className="card-body">
         <div className="card-badges">
           {isAvailable && <span className="badge badge-avail">UNCLAIMED</span>}
-          {isClaiming  && <span className="badge badge-claim">IN PLAY</span>}
-          {isUnpaid    && <span className="badge badge-taken">CLAIMING</span>}
-          {isSold      && <span className="badge badge-taken">CLAIMED</span>}
+          {isReserved  && <span className="badge badge-claim">CLAIMING</span>}
+          {isSold      && <span className="badge badge-sold">CLAIMED</span>}
         </div>
 
         <span className="card-name">MOGI #{num} / 20</span>
 
-        {isTaken && (
-          claimer
-            ? <div className="card-claimer">held by {claimer}</div>
-            : <div className="card-claimer">spoken for</div>
+        {isReserved && (
+          <div className="card-claimer">{hasHolder ? `held by ${claimer}` : 'being claimed…'}</div>
         )}
-
-        {watchers > 0 && isClaiming && (
-          <div className="card-holder">👁 {watchers} watching</div>
-        )}
+        {isSold && <div className="card-claimer">held by {claimer}</div>}
       </div>
     </div>
   )
