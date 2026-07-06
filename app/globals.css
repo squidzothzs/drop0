@@ -44,8 +44,14 @@ body {
 .tee-float {
   position: absolute;
   opacity: 0.5;
-  animation: tee-drift var(--dur, 18s) ease-in-out var(--delay, 0s) infinite alternate;
+  filter: blur(4px); /* teaser: silhouette reads, print doesn't */
+  /* all shirts orbit together — one shared phase, carousel feel */
+  animation: tee-carousel 16s linear infinite;
   perspective: 700px;
+}
+@keyframes tee-carousel {
+  from { transform: rotate(0turn)  translateX(46px) rotate(0turn); }
+  to   { transform: rotate(1turn)  translateX(46px) rotate(-1turn); }
 }
 .tee-float-3d {
   position: relative;
@@ -73,11 +79,6 @@ body {
   from { transform: perspective(700px) rotateY(0deg); }
   to   { transform: perspective(700px) rotateY(360deg); }
 }
-@keyframes tee-drift {
-  0%   { transform: translateY(0px) rotate(-3deg); }
-  50%  { transform: translateY(-26px) rotate(2deg); }
-  100% { transform: translateY(10px) rotate(-1deg); }
-}
 
 /* ─── SITE CLOSED SCREEN ────────────────────────────── */
 .closed-screen {
@@ -91,43 +92,64 @@ body {
   gap: 28px;
 }
 
-.closed-title {
-  font-family: var(--font-head);
-  font-size: clamp(34px, 9vw, 68px);
-  font-weight: 900;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  color: var(--ink);
-  position: relative;
-  display: flex;
-  gap: 0.01em;
+/* hand-drawn "SITE IS CLOSED" artwork */
+.closed-art {
+  width: min(560px, 88vw);
+  height: auto;
   user-select: none;
+  mix-blend-mode: multiply; /* sits on the white bg without a hard edge */
 }
 
-.closed-title .title-letter {
-  display: inline-block;
-  transition: transform 0.1s;
+/* torn ENTER THE DROP banner + LiL guide chip */
+.closed-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
+.closed-enter-img {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 0;
+}
+.closed-enter-img img {
+  width: min(300px, 58vw);
+  height: auto;
+  user-select: none;
+  mix-blend-mode: multiply;
+}
+.closed-enter-img.shaking { animation: btn-shake 0.4s ease; }
 
-.closed-title.shattering .title-letter {
-  animation: letter-fall var(--fall-dur, 0.6s) ease-in var(--fall-delay, 0s) forwards;
+.lil-guide-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 0;
+  transition: transform 0.15s;
 }
+.lil-guide-btn img {
+  width: min(72px, 15vw);
+  height: auto;
+  user-select: none;
+  mix-blend-mode: multiply;
+}
+.lil-guide-btn:hover { transform: scale(1.08); }
+.lil-guide-btn.open  { transform: rotate(-6deg); }
 
-@keyframes letter-fall {
-  0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
-  60%  { transform: translateY(80px) rotate(var(--rot, 15deg)) scale(0.8); opacity: 0.6; }
-  100% { transform: translateY(300px) rotate(var(--rot2, 40deg)) scale(0.3); opacity: 0; }
+/* hand-drawn guide text that pops in below */
+.closed-guide {
+  width: min(420px, 82vw);
+  height: auto;
+  user-select: none;
+  mix-blend-mode: multiply;
+  animation: guide-pop 0.25s ease-out;
 }
-
-.closed-title.reformed .title-letter {
-  animation: letter-reform 0.4s ease-out var(--reform-delay, 0s) both;
+@keyframes guide-pop {
+  from { transform: translateY(-8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
-@keyframes letter-reform {
-  0%   { transform: translateY(-60px) rotate(-10deg); opacity: 0; }
-  100% { transform: translateY(0) rotate(0deg); opacity: 1; }
-}
-
-.enter-btn-wrap { position: relative; }
 
 .enter-btn {
   font-family: var(--font-sans);
@@ -145,14 +167,6 @@ body {
 }
 .enter-btn:hover { background: #333; }
 
-.enter-btn.shaking {
-  animation: btn-shake 0.4s ease;
-}
-.enter-btn.red-flash {
-  background: var(--heat) !important;
-  border-color: var(--heat) !important;
-  color: #fff !important;
-}
 @keyframes btn-shake {
   0%,100% { transform: translateX(0); }
   15%  { transform: translateX(-6px) rotate(-1deg); }

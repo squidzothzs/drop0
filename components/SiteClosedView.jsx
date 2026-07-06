@@ -1,105 +1,79 @@
 'use client'
 import { useState, useRef, useCallback } from 'react'
 import FloatingTees from './FloatingTees'
-import { playDeny } from '../lib/audio'
+import { playDeny, playClick } from '../lib/audio'
 
-const TITLE_A = 'SITE CLOSED'
-const TITLE_B = 'STILL CLOSED'
-
-const ROTATIONS = ['-25deg','18deg','-40deg','30deg','-15deg','22deg','-35deg','28deg','-20deg','32deg','-12deg']
-const ROTATIONS2 = ['-55deg','48deg','-70deg','60deg','-45deg','52deg','-65deg','58deg','-50deg','62deg','-42deg']
+const CLICKS_TO_BREAK = 4
+const BREAK_MS = 1400
 
 export default function SiteClosedView() {
-  const [clicks, setClicks] = useState(0)
   const [shaking, setShaking] = useState(false)
-  const [redFlash, setRedFlash] = useState(false)
-  const [shattering, setShattering] = useState(false)
-  const [reformed, setReformed] = useState(false)
-  const [titleText, setTitleText] = useState(TITLE_A)
-  const timerRef = useRef(null)
-
-  const triggerShake = useCallback(() => {
-    setShaking(true)
-    setRedFlash(true)
-    clearTimeout(timerRef.current)
-    timerRef.current = setTimeout(() => {
-      setShaking(false)
-      setRedFlash(false)
-    }, 420)
-  }, [])
+  const [broken, setBroken] = useState(false)
+  const [guideOpen, setGuideOpen] = useState(false)
+  const clicksRef = useRef(0)
+  const shakeTimer = useRef(null)
+  const breakTimer = useRef(null)
 
   const handleEnter = useCallback(() => {
+    if (broken) return
     playDeny()
-    const next = clicks + 1
-    setClicks(next)
-    triggerShake()
+    setShaking(true)
+    clearTimeout(shakeTimer.current)
+    shakeTimer.current = setTimeout(() => setShaking(false), 420)
 
-    if (next >= 5) {
-      setClicks(0)
-      // begin shatter sequence
-      setShattering(true)
-      setReformed(false)
-      setTimeout(() => {
-        setShattering(false)
-        setTitleText(TITLE_B)
-        // small delay then reform
-        setTimeout(() => setReformed(true), 80)
-        setTimeout(() => setReformed(false), 800)
-      }, 700)
+    clicksRef.current += 1
+    if (clicksRef.current >= CLICKS_TO_BREAK) {
+      clicksRef.current = 0
+      setBroken(true)
+      clearTimeout(breakTimer.current)
+      breakTimer.current = setTimeout(() => setBroken(false), BREAK_MS)
     }
-  }, [clicks, triggerShake])
-
-  const letters = titleText.split('').map((ch, i) => ({
-    ch,
-    rot: ROTATIONS[i % ROTATIONS.length],
-    rot2: ROTATIONS2[i % ROTATIONS2.length],
-    delay: `${i * 0.045}s`,
-  }))
+  }, [broken])
 
   return (
     <>
       <FloatingTees />
       <div className="closed-screen">
-        <div className="closed-sub">mogi · drop 0 · limited to 20</div>
 
-        {/* swappable title — replace inner with <img> for graffiti PNG */}
-        <h1
-          className={`closed-title ${shattering ? 'shattering' : ''} ${reformed ? 'reformed' : ''}`}
-          aria-label={titleText}
-        >
-          {letters.map((l, i) =>
-            l.ch === ' '
-              ? <span key={i} style={{ display: 'inline-block', width: '0.35em' }} />
-              : (
-                <span
-                  key={`${titleText}-${i}`}
-                  className="title-letter"
-                  style={{
-                    '--rot':  l.rot,
-                    '--rot2': l.rot2,
-                    '--fall-delay':   shattering ? l.delay : '0s',
-                    '--reform-delay': reformed   ? l.delay : '0s',
-                  }}
-                >
-                  {l.ch}
-                </span>
-              )
-          )}
-        </h1>
+        <img
+          className="closed-art"
+          src="/pics/siteclosed1-crop.png"
+          alt="Site is closed"
+          draggable="false"
+        />
 
-        <div className="enter-btn-wrap">
+        <div className="closed-btn-row">
           <button
-            className={`enter-btn ${shaking ? 'shaking' : ''} ${redFlash ? 'red-flash' : ''}`}
+            className={`closed-enter-img ${shaking ? 'shaking' : ''}`}
             onClick={handleEnter}
-            aria-label="Enter site"
+            aria-label="Enter the drop (closed)"
           >
-            ENTER
+            <img
+              src={broken ? '/pics/buttonbreak-crop.png' : '/pics/prebreakbutton.png'}
+              alt=""
+              draggable="false"
+            />
+          </button>
+
+          <button
+            className={`lil-guide-btn${guideOpen ? ' open' : ''}`}
+            onClick={() => { playClick(); setGuideOpen(o => !o) }}
+            aria-expanded={guideOpen}
+            aria-label="Lil guide"
+          >
+            <img src="/pics/lil-guide-button.png" alt="LiL guide" draggable="false" />
           </button>
         </div>
 
-        <div className="closed-sub" style={{ marginTop: 8, fontSize: 9 }}>
-          not yet · not yet · not yet · not yet
-        </div>
+        {guideOpen && (
+          <img
+            className="closed-guide"
+            src="/pics/guide-text.png"
+            alt="drop 0 (prequel to drop 1) — unobtainable after sellout — 20 pieces"
+            draggable="false"
+          />
+        )}
+
       </div>
     </>
   )
