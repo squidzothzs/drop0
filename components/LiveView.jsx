@@ -14,7 +14,7 @@ export default function LiveView({ onEnter }) {
           20 pieces · no restock
         </div>
         <button
-          className="btn btn-primary enter-btn"
+          className="enter-btn"
           onClick={() => { playClick(); onEnter() }}
         >
           ENTER THE DROP

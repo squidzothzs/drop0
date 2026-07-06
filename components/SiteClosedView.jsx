@@ -89,7 +89,7 @@ export default function SiteClosedView() {
 
         <div className="enter-btn-wrap">
           <button
-            className={`btn enter-btn ${shaking ? 'shaking' : ''} ${redFlash ? 'red-flash' : ''}`}
+            className={`enter-btn ${shaking ? 'shaking' : ''} ${redFlash ? 'red-flash' : ''}`}
             onClick={handleEnter}
             aria-label="Enter site"
           >

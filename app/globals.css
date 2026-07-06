@@ -1,18 +1,13 @@
-/* ─── COLOR TOKENS ─────────────────────────────────── */
+/* ─── TOKENS ────────────────────────────────────────── */
 :root {
   --ink:   #111111;
-  --link:  #1a6fc4;
   --green: #1d9e5e;
-  --red:   #c0392b;
-  --gold:  #b8923a;
-  --amber: #d4831f;
   --heat:  #e8472b;
-  --line:  #e2e2e2;
   --grey:  #8a8a8a;
-  --bg:    #ffffff;
 
-  --font-sys: 'MS Sans Serif', 'Courier New', monospace;
-  --font-mono: 'Courier New', Courier, monospace;
+  /* AWGE-style: one heavy geometric sans everywhere */
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-head: 'Arial Black', 'Arial Bold', Arial, sans-serif;
 }
 
 /* ─── RESET ─────────────────────────────────────────── */
@@ -21,7 +16,7 @@
 html { font-size: 13px; }
 
 body {
-  font-family: var(--font-sys);
+  font-family: var(--font-sans);
   background: #fff;
   color: var(--ink);
   min-height: 100dvh;
@@ -36,49 +31,7 @@ body {
 /* ─── UTILITY ───────────────────────────────────────── */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
-/* ─── WINDOW CHROME (Win98-style panels) ────────────── */
-.win-panel {
-  border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  background: #c0c0c0;
-  box-shadow: 1px 1px 0 #000;
-}
-.win-inset {
-  border: 2px solid;
-  border-color: #808080 #ffffff #ffffff #808080;
-}
-
-/* ─── BUTTONS ───────────────────────────────────────── */
-.btn {
-  display: inline-block;
-  font-family: var(--font-sys);
-  font-size: 12px;
-  font-weight: bold;
-  padding: 4px 16px;
-  cursor: pointer;
-  border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  background: #c0c0c0;
-  color: var(--ink);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  user-select: none;
-  transition: none;
-}
-.btn:active,
-.btn.pressed {
-  border-color: #808080 #ffffff #ffffff #808080;
-  padding: 5px 15px 3px 17px;
-}
-.btn-primary {
-  background: var(--ink);
-  color: #fff;
-  border-color: #444 #000 #000 #444;
-}
-.btn-danger { background: var(--heat); color: #fff; border-color: #ff8888 #600 #600 #ff8888; }
-.btn-gold   { background: var(--gold); color: #fff; border-color: #e0c060 #5a4000 #5a4000 #e0c060; }
-
-/* ─── FLOATING TEES BACKGROUND ──────────────────────── */
+/* ─── FLOATING TEES BACKGROUND (gate screens only) ──── */
 .tee-bg {
   position: fixed;
   inset: 0;
@@ -139,7 +92,7 @@ body {
 }
 
 .closed-title {
-  font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+  font-family: var(--font-head);
   font-size: clamp(34px, 9vw, 68px);
   font-weight: 900;
   letter-spacing: -0.01em;
@@ -177,7 +130,7 @@ body {
 .enter-btn-wrap { position: relative; }
 
 .enter-btn {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -187,17 +140,17 @@ body {
   color: #fff;
   border: 1px solid var(--ink);
   border-radius: 0;
+  cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 .enter-btn:hover { background: #333; }
-.enter-btn:active { padding: 15px 48px; }
 
 .enter-btn.shaking {
   animation: btn-shake 0.4s ease;
 }
 .enter-btn.red-flash {
   background: var(--heat) !important;
-  border-color: #ff6666 #800 #800 #ff6666 !important;
+  border-color: var(--heat) !important;
   color: #fff !important;
 }
 @keyframes btn-shake {
@@ -211,10 +164,10 @@ body {
 
 .closed-sub {
   font-size: 10px;
+  font-weight: 700;
   letter-spacing: 0.15em;
   color: var(--grey);
   text-transform: uppercase;
-  font-family: var(--font-mono);
 }
 
 /* ─── LIVE SCREEN ───────────────────────────────────── */
@@ -229,7 +182,7 @@ body {
   gap: 28px;
 }
 .live-title {
-  font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+  font-family: var(--font-head);
   font-size: clamp(56px, 17vw, 110px);
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -244,9 +197,9 @@ body {
 }
 .live-sub {
   font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0.2em;
   color: var(--grey);
-  font-family: var(--font-mono);
   text-transform: uppercase;
 }
 
@@ -260,16 +213,16 @@ body {
 /* ── Floating icons — fixed top-right, no bar ── */
 .market-float-icons {
   position: fixed;
-  top: 18px;
-  right: 22px;
+  top: 26px;
+  right: 30px;
   display: flex;
-  gap: 14px;
+  gap: 16px;
   align-items: center;
   z-index: 50;
 }
 .market-float-icons svg {
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   stroke: #111;
   fill: none;
   stroke-width: 1.5;
@@ -278,16 +231,16 @@ body {
 }
 .market-float-icons svg:hover { opacity: 1; }
 
-/* ── Scrolling page title ── */
+/* ── Page title — AWGE-style heavy centered wordmark ── */
 .market-page-title {
-  font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
-  font-size: clamp(36px, 6vw, 64px);
+  font-family: var(--font-head);
+  font-size: clamp(30px, 4.5vw, 46px);
   font-weight: 900;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: #111;
   text-align: center;
-  padding: 32px 16px 0;
+  padding: 44px 16px 0;
   user-select: none;
 }
 
@@ -297,25 +250,27 @@ body {
   position: fixed;
   top: 0;
   bottom: 0;
-  width: clamp(130px, 40vw, 360px);
+  width: clamp(72px, 24vw, 300px);
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   pointer-events: none;
   user-select: none;
   z-index: 0;            /* behind the shirts — mascots are background */
-  padding: 12px 0;
+  padding: 32px 0;
   overflow: hidden;
 }
 @media (min-width: 480px) {
-  .mascot-col { width: clamp(64px, 20vw, 360px); }
+  .mascot-col { width: clamp(90px, 16vw, 300px); }
 }
 .mascot-col.left  { left: 0; }
 .mascot-col.right { right: 0; }
+/* offset the columns so left/right don't mirror each other — reads hand-placed, like AWGE */
+.mascot-col.right { justify-content: space-around; }
 
 .mascot-col img {
-  width: 100%;
-  max-height: 32vh;
+  width: 88%;
+  max-height: 26vh;
   object-fit: contain;
   object-position: center center;
   display: block;
@@ -331,8 +286,8 @@ body {
 }
 @media (min-width: 480px) {
   .market-content {
-    margin-left:  clamp(64px, 20vw, 360px);
-    margin-right: clamp(64px, 20vw, 360px);
+    margin-left:  clamp(90px, 16vw, 300px);
+    margin-right: clamp(90px, 16vw, 300px);
   }
 }
 
@@ -341,11 +296,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 16px 0;
-  font-family: var(--font-mono);
+  gap: 7px;
+  padding: 14px 16px 0;
   font-size: 10px;
-  letter-spacing: 0.16em;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--grey);
 }
@@ -362,15 +317,16 @@ body {
   50%      { opacity: 0.2; }
 }
 
-/* ── Grid ── */
+/* ── Grid — generous AWGE whitespace ── */
 .market-grid-wrap {
   flex: 1;
-  padding: 120px 16px 80px;
+  padding: clamp(60px, 10vh, 130px) 20px 120px;
 }
 .market-grid {
   display: grid;
   grid-template-columns: 1fr;   /* mobile: one big shirt per row */
-  gap: 2px;
+  column-gap: clamp(24px, 4vw, 64px);
+  row-gap: clamp(48px, 7vh, 88px);
   width: 100%;
   max-width: 64vw;              /* keep mascots peeking on both sides */
   margin: 0 auto;
@@ -378,9 +334,22 @@ body {
 @media (min-width: 480px) {
   .market-grid {
     grid-template-columns: repeat(3, 1fr);
-    max-width: none;
-    margin: 0;
+    max-width: 1080px;
+    margin: 0 auto;
   }
+}
+
+/* ── Sold-out footer note ── */
+.market-soldout-note {
+  text-align: center;
+  padding: 40px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--grey);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 48px;
 }
 
 /* ─── ITEM CARD (AWGE-style) ─────────────────────────── */
@@ -388,10 +357,8 @@ body {
   cursor: pointer;
   position: relative;
   background: transparent;
-  transition: opacity 0.15s;
-  overflow: hidden;
+  text-align: center;
 }
-.item-card:hover:not(.card-sold):not(.card-reserved) { opacity: 0.82; }
 .item-card.card-sold,
 .item-card.card-reserved { cursor: default; }
 
@@ -408,17 +375,20 @@ body {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
+  animation: card-spin 6.5s linear infinite;
   will-change: transform;
 }
-
-/* only live (available) pieces spin; reserved/sold sit frozen */
-.item-card:not(.card-sold):not(.card-reserved) .card-thumb-3d {
-  animation: card-spin 4s linear infinite;
-}
-
 @keyframes card-spin {
   from { transform: perspective(800px) rotateY(0deg); }
   to   { transform: perspective(800px) rotateY(360deg); }
+}
+
+/* hover zoom on live pieces */
+.item-card:not(.card-sold):not(.card-reserved) img {
+  transition: transform 0.3s ease;
+}
+.item-card:hover:not(.card-sold):not(.card-reserved) img {
+  transform: scale(1.04);
 }
 
 .card-face {
@@ -463,61 +433,61 @@ body {
   50%     { opacity: 0.72; }
 }
 
-/* card body */
-.card-body { padding: 10px 4px 16px; }
+/* card body — centered stack like AWGE */
+.card-body {
+  padding: 16px 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
 
 .card-badges {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 7px;
+  justify-content: center;
 }
+/* AWGE chip: black pill, white bold caps */
 .badge {
-  font-family: var(--font-mono);
-  font-size: 8px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 2px;
+  padding: 5px 12px;
+  border-radius: 999px;
   background: #111;
   color: #fff;
   line-height: 1.2;
 }
-.badge-avail  { background: #111; }
-.badge-claim  { background: var(--amber); }  /* reserved / being claimed */
-.badge-sold   { background: #111; }          /* permanently claimed */
+/* reserved chip stays monochrome; the pulse is what marks it live */
+.badge-claim { animation: reserved-pulse 1.6s ease-in-out infinite; }
 
 .card-name {
-  font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.04em;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   color: #111;
-  line-height: 1.35;
-  margin-bottom: 4px;
+  line-height: 1.4;
   display: block;
 }
 .card-sold .card-name,
 .card-reserved .card-name { color: #888; }
 
-/* price shown only inside the claim modal */
-.claim-price {
-  font-family: var(--font-mono);
-  font-size: 15px;
-  letter-spacing: 0.1em;
-  color: #fff;
-  text-align: center;
+.card-price {
+  font-size: 12px;
+  font-weight: 400;
+  color: #111;
 }
 
 /* who claimed it — IG handle shown on the piece */
 .card-claimer {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  color: #111;
-  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 400;
+  color: #888;
   word-break: break-word;
 }
 
@@ -575,8 +545,8 @@ body {
 
 /* one muted tone for all supporting copy — no opacity soup */
 .claim-eyebrow {
-  font-family: var(--font-mono);
   font-size: 10px;
+  font-weight: 700;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: #ccc;
@@ -622,8 +592,8 @@ body {
 .tee-face-back { transform: rotateY(180deg); }
 
 .tee-hint {
-  font-family: var(--font-mono);
   font-size: 10px;
+  font-weight: 700;
   color: #ccc;
   letter-spacing: 0.14em;
   text-align: center;
@@ -639,7 +609,7 @@ body {
   align-items: stretch;
 }
 .claim-headline {
-  font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+  font-family: var(--font-head);
   font-size: clamp(30px, 9vw, 40px);
   font-weight: 900;
   letter-spacing: -0.01em;
@@ -649,10 +619,18 @@ body {
   color: #fff;
 }
 .claim-body {
-  font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.7;
   color: #ccc;
+  text-align: center;
+}
+
+/* price shown only inside the claim modal */
+.claim-price {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #fff;
   text-align: center;
 }
 
@@ -662,7 +640,7 @@ body {
 .claim-btn {
   display: block;
   width: 100%;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -670,6 +648,7 @@ body {
   padding: 16px 16px;
   cursor: pointer;
   border: 1px solid #fff;
+  border-radius: 0;
   transition: background 0.15s, color 0.15s;
 }
 .claim-btn.solid  { background: #fff; color: #111; }
@@ -682,14 +661,14 @@ body {
 .claim-form { display: flex; flex-direction: column; gap: 18px; }
 .claim-field { display: flex; flex-direction: column; gap: 6px; }
 .claim-label {
-  font-family: var(--font-mono);
   font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #ccc;
 }
 .claim-input {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 15px;
   padding: 10px 2px;
   border: none;
@@ -709,7 +688,6 @@ select.claim-input option { background: #0d0d0d; color: #fff; }
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.55;
   color: #ccc;
@@ -726,7 +704,7 @@ select.claim-input option { background: #0d0d0d; color: #fff; }
 
 /* success — edition number + countdown */
 .claim-edition {
-  font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+  font-family: var(--font-head);
   font-size: clamp(60px, 22vw, 96px);
   font-weight: 900;
   line-height: 0.9;
@@ -739,45 +717,13 @@ select.claim-input option { background: #0d0d0d; color: #fff; }
   letter-spacing: 0.05em;
 }
 .claim-count {
-  font-family: var(--font-mono);
   font-size: 34px;
   font-weight: 700;
   letter-spacing: 0.1em;
+  font-variant-numeric: tabular-nums;
   text-align: center;
   color: #fff;
   border-top: 1px solid #2a2a2a;
   border-bottom: 1px solid #2a2a2a;
   padding: 14px 0;
 }
-
-/* ─── SOLD OUT VIEW ─────────────────────────────────── */
-.soldout-header-text {
-  color: var(--grey) !important;
-  animation: none !important;
-}
-
-/* ─── ADMIN BAR (dev only) ──────────────────────────── */
-.admin-bar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: #000;
-  color: #0f0;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  padding: 4px 10px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  z-index: 200;
-  border-top: 1px solid #333;
-}
-.admin-bar button {
-  background: #222;
-  color: #0f0;
-  border: 1px solid #0f0;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  padding: 2px 8px;
-  cursor: pointer;
-}
-.admin-bar button:hover { background: #0f0; color: #000; }

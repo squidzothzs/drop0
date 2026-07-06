@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "mogi-drop-0",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 3001
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["next", "dev"],
+      "port": 3001,
+      "autoPort": true
     }
   ]
 }

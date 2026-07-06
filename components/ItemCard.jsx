@@ -30,10 +30,10 @@ export default function ItemCard({ item, onClick }) {
       <div className="card-thumb">
         <div className="card-thumb-3d">
           <div className="card-face card-face-front">
-            <img src="/pics/shirtfront-Photoroom.png" alt={`MOGI #${num}/20 front`} loading="lazy" />
+            <img src="/pics/shirtfront-Photoroom.png" alt={`MOGI #${num}/20 front`} loading="lazy" width="400" height="400" />
           </div>
           <div className="card-face card-face-back">
-            <img src="/pics/shirtback-Photoroom2.png" alt={`MOGI #${num}/20 back`} loading="lazy" />
+            <img src="/pics/shirtback-Photoroom2.png" alt={`MOGI #${num}/20 back`} loading="lazy" width="400" height="400" />
           </div>
         </div>
         {isSold && <div className="taken-cross" aria-hidden="true" />}
@@ -48,6 +48,7 @@ export default function ItemCard({ item, onClick }) {
 
         <span className="card-name">MOGI #{num} / 20</span>
 
+        {isAvailable && <div className="card-price">HKD 380</div>}
         {isReserved && (
           <div className="card-claimer">{hasHolder ? `held by ${claimer}` : 'being claimed…'}</div>
         )}

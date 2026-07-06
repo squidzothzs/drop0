@@ -60,17 +60,7 @@ export default function MarketplaceView() {
           </div>
 
           {isSoldOut && (
-            <div style={{
-              textAlign: 'center',
-              padding: '32px 16px',
-              fontFamily: 'var(--font-mono)',
-              fontSize: 10,
-              color: 'var(--grey)',
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              borderTop: '1px solid #f0f0f0',
-              marginTop: 24,
-            }}>
+            <div className="market-soldout-note">
               all 20 pieces are claimed · permanent registry below
             </div>
           )}
