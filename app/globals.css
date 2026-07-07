@@ -43,7 +43,6 @@ body {
 /* floating shirt — outer drifts, inner spins in 3D (front ↔ back) */
 .tee-float {
   position: absolute;
-  opacity: 0.5;
   filter: blur(4px); /* teaser: silhouette reads, print doesn't */
   /* all shirts orbit together — one shared phase, carousel feel */
   animation: tee-carousel 16s linear infinite;
@@ -52,6 +51,10 @@ body {
 @keyframes tee-carousel {
   from { transform: rotate(0turn)  translateX(46px) rotate(0turn); }
   to   { transform: rotate(1turn)  translateX(46px) rotate(-1turn); }
+}
+/* desktop: shirts read a touch bigger; scale composes with the carousel transform */
+@media (min-width: 480px) {
+  .tee-float { scale: 1.18; }
 }
 .tee-float-3d {
   position: relative;
@@ -160,22 +163,6 @@ body {
   to   { transform: translateY(0); opacity: 1; }
 }
 
-.enter-btn {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  padding: 15px 48px;
-  text-transform: uppercase;
-  background: var(--ink);
-  color: #fff;
-  border: 1px solid var(--ink);
-  border-radius: 0;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.enter-btn:hover { background: #333; }
-
 @keyframes btn-shake {
   0%,100% { transform: translateX(0); }
   15%  { transform: translateX(-6px) rotate(-1deg); }
@@ -183,14 +170,6 @@ body {
   45%  { transform: translateX(-4px); }
   60%  { transform: translateX(4px); }
   75%  { transform: translateX(-2px); }
-}
-
-.closed-sub {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  color: var(--grey);
-  text-transform: uppercase;
 }
 
 /* ─── LIVE SCREEN ───────────────────────────────────── */
@@ -204,26 +183,41 @@ body {
   justify-content: center;
   gap: 28px;
 }
-.live-title {
-  font-family: var(--font-head);
-  font-size: clamp(56px, 17vw, 110px);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  color: var(--green);
-  text-shadow: 0 0 24px rgba(29,158,94,0.4);
-  animation: live-pulse 1.8s ease-in-out infinite;
-  text-transform: uppercase;
+/* hand-drawn art stack — base composition + hand layer on the same canvas */
+.live-art {
+  position: relative;
+  width: min(94vw, 760px);
 }
-@keyframes live-pulse {
-  0%,100% { text-shadow: 0 0 14px rgba(29,158,94,0.35); }
-  50%      { text-shadow: 0 0 38px rgba(29,158,94,0.75); }
+.live-art img {
+  width: 100%;
+  display: block;
+  user-select: none;
 }
-.live-sub {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: var(--grey);
-  text-transform: uppercase;
+/* the hand+ENTER layer — same canvas as the base, so inset:0 lines it up.
+   gentle drift+tilt gives the "it's alive" vibe */
+.live-hand {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* visual layer only — the hotspot below takes the click */
+  animation: hand-alive 3.4s ease-in-out infinite;
+}
+/* invisible click target over the hand+ENTER region of the canvas */
+.live-hotspot {
+  position: absolute;
+  left: 37%;
+  top: 40%;
+  width: 30%;
+  height: 29%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+@keyframes hand-alive {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25%      { transform: translate(5px, -7px) rotate(1.3deg); }
+  50%      { transform: translate(-4px, 5px) rotate(-1.1deg); }
+  75%      { transform: translate(6px, 3px) rotate(0.9deg); }
 }
 
 /* ─── MARKETPLACE ───────────────────────────────────── */
