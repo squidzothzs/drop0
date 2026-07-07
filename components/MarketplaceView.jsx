@@ -20,12 +20,6 @@ export default function MarketplaceView() {
   return (
     <div className="market-root">
 
-      {/* ── Floating icons top-right (not a bar) ── */}
-      <div className="market-float-icons">
-        <svg viewBox="0 0 24 24" aria-label="Account"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        <svg viewBox="0 0 24 24" aria-label="Bag"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-      </div>
-
       {/* ── Fixed left mascot column ── */}
       <aside className="mascot-col left" aria-hidden="true">
         <img src="/pics/pic1.png" alt="" draggable="false" />

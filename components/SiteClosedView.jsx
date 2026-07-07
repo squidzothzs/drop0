@@ -32,6 +32,7 @@ export default function SiteClosedView() {
 
   return (
     <>
+      <div className="closed-bg" aria-hidden="true" />
       <FloatingTees />
       <div className="closed-screen">
 

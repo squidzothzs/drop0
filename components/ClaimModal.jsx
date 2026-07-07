@@ -25,7 +25,17 @@ export default function ClaimModal({ item, onClose }) {
   const [gone, setGone] = useState(false)   // someone claimed it first
   const [busy, setBusy] = useState(false)
   const [reserved, setReserved] = useState(false) // we already hold the reservation
+  const [copied, setCopied] = useState(false)
   const timerRef = useRef(null)
+
+  // what the buyer pastes into the settle DM so admin can match the claim
+  const orderLine = `MOGI drop 0 · piece #${item.num} · size ${size} · ${name.trim()}`
+  const copyOrderLine = useCallback(() => {
+    navigator.clipboard?.writeText(orderLine).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    }).catch(() => {})
+  }, [orderLine])
 
   // lock background scroll while the modal is open
   useEffect(() => {
@@ -82,7 +92,8 @@ export default function ClaimModal({ item, onClose }) {
   }, [item.id, startClaim, busy, reserved])
 
   return (
-    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
+    // once a reservation is held (step ≥ 2), a stray overlay click must not release it — only ✕ closes
+    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget && (gone || step === 1)) handleClose() }}>
       <div className="claim-card" role="dialog" aria-modal="true" aria-label={`Claim MOGI #${item.num}/20`}>
 
         <button className="claim-close" onClick={handleClose} aria-label="Close">✕</button>
@@ -205,6 +216,10 @@ export default function ClaimModal({ item, onClose }) {
                 <p className="claim-body" style={{ textAlign: 'center' }}>
                   Settle within thirty minutes or it returns to the floor. Keep this tab open.
                 </p>
+                <button className="claim-order-line" onClick={copyOrderLine} type="button">
+                  {orderLine}
+                  <span>{copied ? 'copied ✓' : 'tap to copy · paste it in the DM'}</span>
+                </button>
                 <a
                   className="claim-btn solid"
                   href="https://www.instagram.com/mogi.exists/"

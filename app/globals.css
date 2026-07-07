@@ -81,6 +81,15 @@ body {
 }
 
 /* ─── SITE CLOSED SCREEN ────────────────────────────── */
+/* photo backdrop — sits under the floating shirts (.tee-bg is z0, art z1) */
+.closed-bg {
+  position: fixed;
+  inset: -12px; /* bleed past the edges so the blur doesn't show a bright rim */
+  background: url('/pics/bg.png') center / cover no-repeat;
+  filter: blur(6px);
+  z-index: -1;
+}
+
 .closed-screen {
   position: relative;
   z-index: 1;
@@ -224,27 +233,6 @@ body {
   background: #fff;
 }
 
-/* ── Floating icons — fixed top-right, no bar ── */
-.market-float-icons {
-  position: fixed;
-  top: 26px;
-  right: 30px;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  z-index: 50;
-}
-.market-float-icons svg {
-  width: 21px;
-  height: 21px;
-  stroke: #111;
-  fill: none;
-  stroke-width: 1.5;
-  cursor: pointer;
-  opacity: 0.8;
-}
-.market-float-icons svg:hover { opacity: 1; }
-
 /* ── Page title — AWGE-style heavy centered wordmark ── */
 .market-page-title {
   font-family: var(--font-head);
@@ -289,6 +277,15 @@ body {
   object-position: center center;
   display: block;
   mix-blend-mode: multiply;
+}
+
+/* mobile: AWGE-style — mascots grow and bleed half off the viewport edges,
+   so they frame the shirts instead of overlapping them */
+@media (max-width: 479px) {
+  .mascot-col { width: 30vw; padding: 12vh 0; }
+  .mascot-col img { width: 115%; max-height: 20vh; }
+  .mascot-col.left img  { transform: translateX(-38%); }
+  .mascot-col.right img { transform: translateX(38%); }
 }
 
 /* ── Scrollable content ── */
@@ -741,3 +738,30 @@ select.claim-input option { background: #0d0d0d; color: #fff; }
   border-bottom: 1px solid #2a2a2a;
   padding: 14px 0;
 }
+
+/* the order line the buyer pastes into the settle DM */
+.claim-order-line {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  padding: 12px 14px;
+  margin: 4px 0 10px;
+  background: none;
+  border: 1px dashed #3a3a3a;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+  cursor: pointer;
+}
+.claim-order-line span {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #888;
+}
+.claim-order-line:hover { border-color: #666; }
