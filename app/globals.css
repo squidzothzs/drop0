@@ -65,18 +65,18 @@ body {
   .tee-float { width: 210px !important; height: 210px !important; }
   .tee-float:nth-child(2n) { width: 168px !important; height: 168px !important; } /* depth cue */
   .tee-float:nth-child(n+13) { display: none; }
-  .tee-float:nth-child(1)  { top: 2%  !important; left: -8% !important; }
-  .tee-float:nth-child(2)  { top: 4%  !important; left: 30% !important; }
-  .tee-float:nth-child(3)  { top: 2%  !important; left: 66% !important; }
-  .tee-float:nth-child(4)  { top: 26% !important; left: -6% !important; }
-  .tee-float:nth-child(5)  { top: 27% !important; left: 31% !important; }
-  .tee-float:nth-child(6)  { top: 26% !important; left: 66% !important; }
-  .tee-float:nth-child(7)  { top: 50% !important; left: -8% !important; }
-  .tee-float:nth-child(8)  { top: 51% !important; left: 30% !important; }
-  .tee-float:nth-child(9)  { top: 50% !important; left: 66% !important; }
-  .tee-float:nth-child(10) { top: 74% !important; left: -6% !important; }
-  .tee-float:nth-child(11) { top: 75% !important; left: 31% !important; }
-  .tee-float:nth-child(12) { top: 74% !important; left: 66% !important; }
+  .tee-float:nth-child(1)  { top: 2%  !important; left: -15% !important; }
+  .tee-float:nth-child(2)  { top: 4%  !important; left: 23%  !important; }
+  .tee-float:nth-child(3)  { top: 2%  !important; left: 59%  !important; }
+  .tee-float:nth-child(4)  { top: 26% !important; left: -13% !important; }
+  .tee-float:nth-child(5)  { top: 27% !important; left: 24%  !important; }
+  .tee-float:nth-child(6)  { top: 26% !important; left: 59%  !important; }
+  .tee-float:nth-child(7)  { top: 50% !important; left: -15% !important; }
+  .tee-float:nth-child(8)  { top: 51% !important; left: 23%  !important; }
+  .tee-float:nth-child(9)  { top: 50% !important; left: 59%  !important; }
+  .tee-float:nth-child(10) { top: 74% !important; left: -13% !important; }
+  .tee-float:nth-child(11) { top: 75% !important; left: 24%  !important; }
+  .tee-float:nth-child(12) { top: 74% !important; left: 59%  !important; }
   /* same circling feel, tighter radius so the orbit never leaves the screen */
   @keyframes tee-carousel {
     from { transform: rotate(0turn) translateX(22px) rotate(0turn); }
