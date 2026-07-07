@@ -11,6 +11,7 @@ function App() {
   const [entered, setEntered] = useState(false) // per-visitor: passed the LIVE gate
 
   // status is set from the admin panel and shared across all visitors
+  if (appState === null) return null // still loading — blank beats flashing 'closed'
   if (appState === 'siteClosed') return <SiteClosedView />
 
   // 'open' shows the LIVE gate first, then the shop once they enter
