@@ -60,8 +60,8 @@ body {
    radius always stays inside the viewport; !important beats the inline
    desktop layout from FloatingTees.jsx */
 @media (max-width: 479px) {
-  .tee-float { width: 140px !important; height: 140px !important; }
-  .tee-float:nth-child(2n) { width: 112px !important; height: 112px !important; } /* depth cue */
+  .tee-float { width: 250px !important; height: 250px !important; }
+  .tee-float:nth-child(2n) { width: 200px !important; height: 200px !important; } /* depth cue */
   .tee-float:nth-child(n+13) { display: none; }
   .tee-float:nth-child(1)  { top: 4%  !important; left: 7%  !important; }
   .tee-float:nth-child(2)  { top: 6%  !important; left: 34% !important; }
