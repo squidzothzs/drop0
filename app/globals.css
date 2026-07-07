@@ -60,21 +60,23 @@ body {
    radius always stays inside the viewport; !important beats the inline
    desktop layout from FloatingTees.jsx */
 @media (max-width: 479px) {
-  .tee-float { width: 250px !important; height: 250px !important; }
-  .tee-float:nth-child(2n) { width: 200px !important; height: 200px !important; } /* depth cue */
+  /* 3 cols × 4 rows, evenly spaced across the whole screen with real gaps.
+     size kept modest so the shirt + orbit radius fits its cell without piling */
+  .tee-float { width: 108px !important; height: 108px !important; }
+  .tee-float:nth-child(2n) { width: 92px !important; height: 92px !important; } /* depth cue */
   .tee-float:nth-child(n+13) { display: none; }
-  .tee-float:nth-child(1)  { top: 4%  !important; left: 7%  !important; }
-  .tee-float:nth-child(2)  { top: 6%  !important; left: 34% !important; }
-  .tee-float:nth-child(3)  { top: 3%  !important; left: 55% !important; }
-  .tee-float:nth-child(4)  { top: 28% !important; left: 9%  !important; }
-  .tee-float:nth-child(5)  { top: 30% !important; left: 36% !important; }
-  .tee-float:nth-child(6)  { top: 26% !important; left: 56% !important; }
-  .tee-float:nth-child(7)  { top: 52% !important; left: 8%  !important; }
-  .tee-float:nth-child(8)  { top: 54% !important; left: 35% !important; }
-  .tee-float:nth-child(9)  { top: 50% !important; left: 55% !important; }
-  .tee-float:nth-child(10) { top: 76% !important; left: 10% !important; }
-  .tee-float:nth-child(11) { top: 78% !important; left: 36% !important; }
-  .tee-float:nth-child(12) { top: 74% !important; left: 56% !important; }
+  .tee-float:nth-child(1)  { top: 4%  !important; left: 3%  !important; }
+  .tee-float:nth-child(2)  { top: 5%  !important; left: 37% !important; }
+  .tee-float:nth-child(3)  { top: 4%  !important; left: 70% !important; }
+  .tee-float:nth-child(4)  { top: 27% !important; left: 4%  !important; }
+  .tee-float:nth-child(5)  { top: 28% !important; left: 37% !important; }
+  .tee-float:nth-child(6)  { top: 27% !important; left: 70% !important; }
+  .tee-float:nth-child(7)  { top: 50% !important; left: 3%  !important; }
+  .tee-float:nth-child(8)  { top: 51% !important; left: 37% !important; }
+  .tee-float:nth-child(9)  { top: 50% !important; left: 70% !important; }
+  .tee-float:nth-child(10) { top: 73% !important; left: 4%  !important; }
+  .tee-float:nth-child(11) { top: 74% !important; left: 37% !important; }
+  .tee-float:nth-child(12) { top: 73% !important; left: 70% !important; }
   /* same circling feel, tighter radius so the orbit never leaves the screen */
   @keyframes tee-carousel {
     from { transform: rotate(0turn) translateX(22px) rotate(0turn); }
