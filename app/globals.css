@@ -140,6 +140,42 @@ body {
 }
 
 /* torn ENTER THE DROP banner + LiL guide chip */
+/* drop countdown — day : hour : min */
+.closed-timer {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--font-head);
+  color: #111;
+  user-select: none;
+}
+.timer-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.timer-unit span {
+  font-size: clamp(34px, 6.5vw, 50px);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+}
+.timer-unit em {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+.timer-colon {
+  font-size: clamp(34px, 6.5vw, 50px);
+  font-weight: 900;
+  line-height: 1;
+}
+
 .closed-btn-row {
   display: flex;
   align-items: center;
@@ -177,13 +213,55 @@ body {
 .lil-guide-btn:hover { transform: scale(1.08); }
 .lil-guide-btn.open  { transform: rotate(-6deg); }
 
-/* hand-drawn guide text that pops in below */
-.closed-guide {
-  width: min(420px, 82vw);
-  height: auto;
-  user-select: none;
-  mix-blend-mode: multiply;
+/* LiL guide popup — small window of hand-drawn pages */
+.guide-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlay-in 0.2s ease;
+}
+.guide-window {
+  position: relative;
+  width: min(92vw, 600px);
+  max-height: 94dvh;
   animation: guide-pop 0.25s ease-out;
+}
+/* hand-drawn ✕ close button — kept inside the paper's black border */
+.guide-close {
+  position: absolute;
+  top: 6%;
+  right: 7.5%;
+  width: 9%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.guide-close img {
+  width: 100%;
+  display: block;
+  user-select: none;
+}
+.guide-window img {
+  width: 100%;
+  display: block;
+  user-select: none;
+}
+/* invisible click target over the arrow drawn bottom-right of every page */
+.guide-next {
+  position: absolute;
+  left: 68%;
+  top: 74%;
+  width: 27%;
+  height: 20%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
 }
 @keyframes guide-pop {
   from { transform: translateY(-8px); opacity: 0; }
