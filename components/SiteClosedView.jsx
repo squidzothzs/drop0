@@ -6,8 +6,8 @@ import { playDeny, playClick } from '../lib/audio'
 const CLICKS_TO_BREAK = 4
 const BREAK_MS = 1400
 
-// drop timestamp — null shows -- : -- : -- ; set to a Date.parse(...) when the date is known
-const DROP_AT = null
+// drop timestamp — null shows -- : -- : --
+const DROP_AT = Date.parse('2026-07-21T00:00:00+08:00') // 21 Jul, 12:00 am HK time
 
 // hand-drawn guide pages, in order (there is no p4)
 const GUIDE_PAGES = [
@@ -87,12 +87,12 @@ export default function SiteClosedView() {
           draggable="false"
         />
 
-        <div className="closed-timer" aria-label="Drop countdown">
-          <div className="timer-unit"><span>{tDay}</span><em>day</em></div>
+        <div className="closed-timer" aria-label="Drop countdown — days : hours : minutes">
+          <div className="timer-unit"><span>{tDay}</span></div>
           <div className="timer-colon">:</div>
-          <div className="timer-unit"><span>{tHour}</span><em>hour</em></div>
+          <div className="timer-unit"><span>{tHour}</span></div>
           <div className="timer-colon">:</div>
-          <div className="timer-unit"><span>{tMin}</span><em>min</em></div>
+          <div className="timer-unit"><span>{tMin}</span></div>
         </div>
 
         <div className="closed-btn-row">
