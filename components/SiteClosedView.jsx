@@ -7,7 +7,7 @@ const CLICKS_TO_BREAK = 4
 const BREAK_MS = 1400
 
 // drop timestamp — null shows -- : -- : --
-const DROP_AT = Date.parse('2026-07-21T00:00:00+08:00') // 21 Jul, 12:00 am HK time
+const DROP_AT = Date.parse('2026-07-25T00:00:00+08:00') // 25 Jul, 12:00 am HK time
 
 // hand-drawn guide pages, in order (there is no p4)
 const GUIDE_PAGES = [
