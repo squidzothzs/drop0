@@ -1,3 +1,7 @@
+/* Bevan — free heavy slab-serif display (Google Fonts), stand-in for the
+   commercial Gans Italiana. @import must stay at the very top of the file. */
+@import url('https://fonts.googleapis.com/css2?family=Bevan&display=swap');
+
 /* ─── TOKENS ────────────────────────────────────────── */
 :root {
   --ink:   #111111;
@@ -8,15 +12,6 @@
   /* AWGE-style: one heavy geometric sans everywhere */
   --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-head: 'Arial Black', 'Arial Bold', Arial, sans-serif;
-}
-
-/* Gans Italiana — commercial display face, not bundled. Drop the file at
-   public/fonts/gans-italiana.woff2 and it loads; until then it falls back to a
-   slab serif so nothing breaks. */
-@font-face {
-  font-family: 'Gans Italiana';
-  src: url('/fonts/gans-italiana.woff2') format('woff2');
-  font-display: swap;
 }
 
 /* ─── RESET ─────────────────────────────────────────── */
@@ -334,10 +329,10 @@ body {
 
 /* ─── MARKETPLACE ───────────────────────────────────── */
 .market-root {
-  /* Gans Italiana across the whole shop — children read these vars, so
+  /* Bevan display face across the whole shop — children read these vars, so
      re-pointing them here cascades to title, status, badges, names, prices */
-  --font-sans: 'Gans Italiana', Georgia, 'Times New Roman', serif;
-  --font-head: 'Gans Italiana', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Bevan', Georgia, 'Times New Roman', serif;
+  --font-head: 'Bevan', Georgia, 'Times New Roman', serif;
   min-height: 100dvh;
   position: relative;
   background: #fff;
