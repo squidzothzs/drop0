@@ -20,6 +20,9 @@ export default function MarketplaceView() {
   return (
     <div className="market-root">
 
+      {/* ── Centered backdrop behind the shirts ── */}
+      <div className="market-inner-bg" aria-hidden="true" />
+
       {/* ── Fixed left mascot column ── */}
       <aside className="mascot-col left" aria-hidden="true">
         <img src="/pics/pic1.png" alt="" draggable="false" />

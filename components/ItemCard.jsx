@@ -3,14 +3,14 @@ import { useCallback } from 'react'
 import { playClick } from '../lib/audio'
 
 export default function ItemCard({ item, onClick }) {
-  const { num, status, holder, holderIg, showIg } = item
+  const { num, status, publicHandle } = item
   const isSold      = status === 'soldPaid'
   const isAvailable = status === 'available'
   const isReserved  = status === 'claiming' || status === 'claimedUnpaid' // unclickable, no cross
-  const hasHolder   = !!holder
+  const hasDetails  = status === 'claimedUnpaid' || status === 'soldPaid' // buyer submitted details
 
   // shown on the piece: the @ if they opted in, otherwise anonymous
-  const claimer = showIg && holderIg ? holderIg : 'anonymous'
+  const claimer = publicHandle || 'anonymous'
 
   const handleClick = useCallback(() => {
     if (!isAvailable) return
@@ -50,7 +50,7 @@ export default function ItemCard({ item, onClick }) {
 
         {isAvailable && <div className="card-price">HKD 380</div>}
         {isReserved && (
-          <div className="card-claimer">{hasHolder ? `held by ${claimer}` : 'being claimed…'}</div>
+          <div className="card-claimer">{hasDetails ? `held by ${claimer}` : 'being claimed…'}</div>
         )}
         {isSold && <div className="card-claimer">held by {claimer}</div>}
       </div>

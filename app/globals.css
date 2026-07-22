@@ -10,6 +10,15 @@
   --font-head: 'Arial Black', 'Arial Bold', Arial, sans-serif;
 }
 
+/* Gans Italiana — commercial display face, not bundled. Drop the file at
+   public/fonts/gans-italiana.woff2 and it loads; until then it falls back to a
+   slab serif so nothing breaks. */
+@font-face {
+  font-family: 'Gans Italiana';
+  src: url('/fonts/gans-italiana.woff2') format('woff2');
+  font-display: swap;
+}
+
 /* ─── RESET ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -325,9 +334,26 @@ body {
 
 /* ─── MARKETPLACE ───────────────────────────────────── */
 .market-root {
+  /* Gans Italiana across the whole shop — children read these vars, so
+     re-pointing them here cascades to title, status, badges, names, prices */
+  --font-sans: 'Gans Italiana', Georgia, 'Times New Roman', serif;
+  --font-head: 'Gans Italiana', Georgia, 'Times New Roman', serif;
   min-height: 100dvh;
   position: relative;
   background: #fff;
+}
+
+/* internalbg — fixed, centered, sits behind the shirt cards (mobile + pc) */
+.market-inner-bg {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(86vw, 640px);
+  aspect-ratio: 1.439;
+  background: url('/pics/internalbg.png') center / contain no-repeat;
+  z-index: 0;            /* above white bg, behind the z-index:1 content/cards */
+  pointer-events: none;
 }
 
 /* ── Page title — AWGE-style heavy centered wordmark ── */

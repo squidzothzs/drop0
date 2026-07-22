@@ -9,11 +9,14 @@ export async function POST(req) {
   }
   const { error } = await supabaseAdmin
     .from('pieces')
-    .update({
-      status: 'available', holder: null, holder_ig: null,
-      show_ig: false, size: null, claim_token: null, claimed_at: null,
-    })
+    .update({ status: 'available', public_handle: null })
     .eq('id', id)
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
+  // wipe the buyer's PII from the private table too
+  const { error: pErr } = await supabaseAdmin
+    .from('piece_private')
+    .update({ holder: null, holder_ig: null, size: null, phone: null, address: null, claim_token: null, claimed_at: null })
+    .eq('piece_id', id)
+  if (pErr) return NextResponse.json({ ok: false, error: pErr.message }, { status: 500 })
   return NextResponse.json({ ok: true })
 }

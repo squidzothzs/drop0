@@ -1,40 +1,58 @@
 -- MOGI Drop 0 — Supabase schema
 -- Run this once in the Supabase SQL editor (Dashboard → SQL → New query → paste → Run).
--- Re-running is safe: it drops and recreates everything.
+-- Re-running is safe: it drops and recreates everything (no real sales yet).
+--
+-- SECURITY MODEL
+--   public.pieces        — world-readable + realtime-broadcast. Holds ONLY what
+--                          every visitor may see: status, number, and the @handle
+--                          a buyer chose to show (null = "anonymous").
+--   public.piece_private — buyer PII + the claim secret. NO anon access, NOT
+--                          broadcast. Reached only via the SECURITY DEFINER
+--                          functions below or the service-role key (admin routes).
+--   This split is why an opted-out buyer's name/handle never leaves the server,
+--   and why adding phone/address (to piece_private) can't leak to the public.
 
--- ── table ───────────────────────────────────────────────
+-- ── tables ──────────────────────────────────────────────
+drop table if exists public.piece_private cascade;
 drop table if exists public.pieces cascade;
 
 create table public.pieces (
-  id          int primary key,
-  num         text not null,
-  status      text not null default 'available'
-              check (status in ('available','claiming','claimedUnpaid','soldPaid')),
-  holder      text,
-  holder_ig   text,
-  show_ig     boolean not null default false,
+  id            int primary key,
+  num           text not null,
+  status        text not null default 'available'
+                check (status in ('available','claiming','claimedUnpaid','soldPaid')),
+  public_handle text   -- shown on the piece; set only when the buyer opts in, else null
+);
+
+create table public.piece_private (
+  piece_id    int primary key references public.pieces(id) on delete cascade,
+  holder      text,          -- buyer's real name
+  holder_ig   text,          -- buyer's IG (stored even when they display as anonymous)
   size        text,
-  claim_token uuid,
+  phone       text,          -- for shipping — never goes in the public table
+  address     text,          -- for shipping — never goes in the public table
+  claim_token uuid,          -- the buyer's secret for release_claim; must not be public
   claimed_at  timestamptz
 );
 
--- seed 20 pieces (#01..#20)
+-- seed 20 pieces (#01..#20) + their private rows
 insert into public.pieces (id, num)
-select g, lpad(g::text, 2, '0')
-from generate_series(1, 20) as g;
+select g, lpad(g::text, 2, '0') from generate_series(1, 20) as g;
+
+insert into public.piece_private (piece_id)
+select g from generate_series(1, 20) as g;
 
 -- ── row level security ──────────────────────────────────
--- anon may READ everything; all writes go through the SECURITY DEFINER
--- functions below or the service-role key (admin server routes). No direct
--- insert/update/delete policy => anon cannot mutate rows directly.
+-- pieces: anon may READ the public columns; no write policy => no direct mutation.
 alter table public.pieces enable row level security;
+create policy "pieces public read" on public.pieces for select using (true);
 
-create policy "pieces are public to read"
-  on public.pieces for select
-  using (true);
+-- piece_private: NO policies at all => anon/authenticated cannot select or mutate.
+-- Only SECURITY DEFINER functions (run as owner) and the service-role key reach it.
+alter table public.piece_private enable row level security;
 
 -- ── claim flow functions (atomic, race-safe) ───────────
--- The conditional UPDATE is the lock: it touches exactly one row or zero.
+-- The conditional UPDATE on pieces is the lock: it touches exactly one row or zero.
 
 -- reserve an available piece; returns a claim token, or null if already taken
 create or replace function public.claim_piece(p_id int)
@@ -42,12 +60,14 @@ returns uuid
 language plpgsql security definer set search_path = public as $$
 declare token uuid := gen_random_uuid();
 begin
-  update public.pieces
-     set status = 'claiming', claim_token = token, claimed_at = now()
+  update public.pieces set status = 'claiming'
    where id = p_id and status = 'available';
   if not found then
     return null;            -- someone beat them to it
   end if;
+  update public.piece_private
+     set claim_token = token, claimed_at = now()
+   where piece_id = p_id;
   return token;
 end $$;
 
@@ -57,11 +77,22 @@ create or replace function public.confirm_claim(
 returns boolean
 language plpgsql security definer set search_path = public as $$
 begin
+  -- caller must hold the reservation (token in the private table) and it must be live
+  if not exists (
+    select 1 from public.pieces p
+    join public.piece_private pv on pv.piece_id = p.id
+    where p.id = p_id and p.status = 'claiming' and pv.claim_token = p_token
+  ) then
+    return false;
+  end if;
+  update public.piece_private
+     set holder = p_name, holder_ig = nullif(p_ig, ''), size = p_size
+   where piece_id = p_id;
   update public.pieces
      set status = 'claimedUnpaid',
-         holder = p_name, holder_ig = nullif(p_ig, ''), show_ig = p_show_ig, size = p_size
-   where id = p_id and claim_token = p_token and status = 'claiming';
-  return found;
+         public_handle = case when p_show_ig then nullif(p_ig, '') else null end
+   where id = p_id;
+  return true;
 end $$;
 
 -- release a reservation this browser holds (cancel / window closed)
@@ -69,11 +100,20 @@ create or replace function public.release_claim(p_id int, p_token uuid)
 returns boolean
 language plpgsql security definer set search_path = public as $$
 begin
-  update public.pieces
-     set status = 'available', holder = null, holder_ig = null,
-         show_ig = false, size = null, claim_token = null, claimed_at = null
-   where id = p_id and claim_token = p_token and status in ('claiming','claimedUnpaid');
-  return found;
+  if not exists (
+    select 1 from public.pieces p
+    join public.piece_private pv on pv.piece_id = p.id
+    where p.id = p_id and pv.claim_token = p_token
+      and p.status in ('claiming','claimedUnpaid')
+  ) then
+    return false;
+  end if;
+  update public.pieces set status = 'available', public_handle = null where id = p_id;
+  update public.piece_private
+     set holder = null, holder_ig = null, size = null,
+         phone = null, address = null, claim_token = null, claimed_at = null
+   where piece_id = p_id;
+  return true;
 end $$;
 
 grant execute on function public.claim_piece(int)               to anon, authenticated;
@@ -95,26 +135,41 @@ create policy "site_config public read"
 -- writes only via the service-role admin route; no anon write policy.
 
 -- ── realtime ────────────────────────────────────────────
--- push row changes to subscribed browsers
+-- push row changes to subscribed browsers. piece_private is deliberately NOT
+-- published — its rows must never reach a client.
 alter publication supabase_realtime add table public.pieces;
 alter publication supabase_realtime add table public.site_config;
 
 -- ── auto-expiry (pg_cron) ───────────────────────────────
 -- Enable the pg_cron extension first: Dashboard → Database → Extensions → pg_cron.
--- Then run the rest of this block.
 create extension if not exists pg_cron;
 
 -- unpaid reservations lapse after 30 minutes
 select cron.schedule('release-expired-unpaid', '* * * * *', $$
-  update public.pieces
-     set status='available', holder=null, holder_ig=null,
-         show_ig=false, size=null, claim_token=null, claimed_at=null
-   where status='claimedUnpaid' and claimed_at < now() - interval '30 minutes';
+  with expired as (
+    select pv.piece_id from public.piece_private pv
+    join public.pieces p on p.id = pv.piece_id
+    where p.status = 'claimedUnpaid' and pv.claimed_at < now() - interval '30 minutes'
+  ), _pub as (
+    update public.pieces set status = 'available', public_handle = null
+     where id in (select piece_id from expired)
+  )
+  update public.piece_private
+     set holder = null, holder_ig = null, size = null,
+         phone = null, address = null, claim_token = null, claimed_at = null
+   where piece_id in (select piece_id from expired);
 $$);
 
 -- abandoned 'claiming' (opened modal, walked away) lapse after 5 minutes
 select cron.schedule('release-stale-claiming', '* * * * *', $$
-  update public.pieces
-     set status='available', claim_token=null, claimed_at=null
-   where status='claiming' and claimed_at < now() - interval '5 minutes';
+  with stale as (
+    select pv.piece_id from public.piece_private pv
+    join public.pieces p on p.id = pv.piece_id
+    where p.status = 'claiming' and pv.claimed_at < now() - interval '5 minutes'
+  ), _pub as (
+    update public.pieces set status = 'available'
+     where id in (select piece_id from stale)
+  )
+  update public.piece_private set claim_token = null, claimed_at = null
+   where piece_id in (select piece_id from stale);
 $$);
