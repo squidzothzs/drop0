@@ -1,6 +1,6 @@
-/* Bevan — free heavy slab-serif display (Google Fonts), stand-in for the
-   commercial Gans Italiana. @import must stay at the very top of the file. */
-@import url('https://fonts.googleapis.com/css2?family=Bevan&display=swap');
+/* Coiny — free fat rounded display (Google Fonts), closest match to Cooper
+   Black / the BAPE "GO! APE" look. @import must stay at the very top. */
+@import url('https://fonts.googleapis.com/css2?family=Coiny&display=swap');
 
 /* ─── TOKENS ────────────────────────────────────────── */
 :root {
@@ -329,10 +329,10 @@ body {
 
 /* ─── MARKETPLACE ───────────────────────────────────── */
 .market-root {
-  /* Bevan display face across the whole shop — children read these vars, so
+  /* Coiny display face across the whole shop — children read these vars, so
      re-pointing them here cascades to title, status, badges, names, prices */
-  --font-sans: 'Bevan', Georgia, 'Times New Roman', serif;
-  --font-head: 'Bevan', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Coiny', Georgia, 'Times New Roman', serif;
+  --font-head: 'Coiny', Georgia, 'Times New Roman', serif;
   min-height: 100dvh;
   position: relative;
   background: #fff;
