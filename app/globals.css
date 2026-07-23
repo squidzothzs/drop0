@@ -347,14 +347,15 @@ body {
   z-index: 0;
   pointer-events: none;
 }
-/* tablet / iPad / desktop: whole-screen groupmogi photo, faded + blurred.
-   inset bleed hides the blur's white rim. */
+/* tablet / iPad / desktop: whole-screen groupmogi photo, colour kept, blurred
+   heavy so there are no sharp shapes to fight the text. inset bleed hides the
+   blur's white rim. */
 @media (min-width: 768px) {
   .market-inner-bg {
     inset: -30px;
     background: url('/pics/groupmogi.jfif') center / cover no-repeat;
-    opacity: 0.6;
-    filter: blur(8px);
+    filter: blur(10px);
+    opacity: 0.9;
   }
 }
 
@@ -396,7 +397,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--grey);
+  color: #fff;   /* darker grey reads on the blur without any glow */
 }
 .status-dot {
   width: 7px; height: 7px;
@@ -568,8 +569,8 @@ body {
   line-height: 1.4;
   display: block;
 }
-.card-sold .card-name,
-.card-reserved .card-name { color: #888; }
+.card-sold .card-name { color: #888; }
+.card-reserved .card-name { color: #fff; }   /* claiming mode reads on the blur */
 
 .card-price {
   font-size: 12px;
@@ -581,7 +582,7 @@ body {
 .card-claimer {
   font-size: 11px;
   font-weight: 400;
-  color: #888;
+  color: #fff;
   word-break: break-word;
 }
 
