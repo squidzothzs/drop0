@@ -20,22 +20,8 @@ export default function MarketplaceView() {
   return (
     <div className="market-root">
 
-      {/* ── Centered backdrop behind the shirts ── */}
+      {/* ── Full-screen backdrop behind the shirts ── */}
       <div className="market-inner-bg" aria-hidden="true" />
-
-      {/* ── Fixed left mascot column ── */}
-      <aside className="mascot-col left" aria-hidden="true">
-        <img src="/pics/pic1.png" alt="" draggable="false" />
-        <img src="/pics/pic2.png" alt="" draggable="false" />
-        <img src="/pics/pic3.png" alt="" draggable="false" />
-      </aside>
-
-      {/* ── Fixed right mascot column ── */}
-      <aside className="mascot-col right" aria-hidden="true">
-        <img src="/pics/pic1.png" alt="" draggable="false" />
-        <img src="/pics/pic2.png" alt="" draggable="false" />
-        <img src="/pics/pic3.png" alt="" draggable="false" />
-      </aside>
 
       {/* ── Scrollable main content ── */}
       <div className="market-content">

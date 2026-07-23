@@ -347,6 +347,16 @@ body {
   z-index: 0;
   pointer-events: none;
 }
+/* tablet / iPad / desktop: whole-screen groupmogi photo, faded + blurred.
+   inset bleed hides the blur's white rim. */
+@media (min-width: 768px) {
+  .market-inner-bg {
+    inset: -30px;
+    background: url('/pics/groupmogi.jfif') center / cover no-repeat;
+    opacity: 0.6;
+    filter: blur(8px);
+  }
+}
 
 /* ── Page title — AWGE-style heavy centered wordmark ── */
 .market-page-title {
@@ -359,46 +369,6 @@ body {
   text-align: center;
   padding: 44px 16px 0;
   user-select: none;
-}
-
-/* ── Fixed mascot side columns (always in viewport) ── */
-.mascot-col {
-  display: flex;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: clamp(72px, 24vw, 300px);
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;            /* behind the shirts — mascots are background */
-  padding: 32px 0;
-  overflow: hidden;
-}
-@media (min-width: 480px) {
-  .mascot-col { width: clamp(90px, 16vw, 300px); }
-}
-.mascot-col.left  { left: 0; }
-.mascot-col.right { right: 0; }
-/* offset the columns so left/right don't mirror each other — reads hand-placed, like AWGE */
-.mascot-col.right { justify-content: space-around; }
-
-.mascot-col img {
-  width: 88%;
-  max-height: 26vh;
-  object-fit: contain;
-  object-position: center center;
-  display: block;
-  mix-blend-mode: multiply;
-}
-
-/* mobile: keep all 3 figures per side fully on-screen and centered in their
-   column — no off-screen bleed (was clipping characters against overflow:hidden) */
-@media (max-width: 479px) {
-  .mascot-col { width: 24vw; padding: 6vh 0; }
-  .mascot-col img { width: 100%; max-height: 16vh; transform: none; }
 }
 
 /* ── Scrollable content ── */
