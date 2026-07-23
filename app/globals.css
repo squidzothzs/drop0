@@ -1,6 +1,6 @@
-/* Coiny — free fat rounded display (Google Fonts), closest match to Cooper
-   Black / the BAPE "GO! APE" look. @import must stay at the very top. */
-@import url('https://fonts.googleapis.com/css2?family=Coiny&display=swap');
+/* Bevan — free heavy slab-serif display (Google Fonts).
+   @import must stay at the very top of the file. */
+@import url('https://fonts.googleapis.com/css2?family=Bevan&display=swap');
 
 /* ─── TOKENS ────────────────────────────────────────── */
 :root {
@@ -331,22 +331,22 @@ body {
 .market-root {
   /* Coiny display face across the whole shop — children read these vars, so
      re-pointing them here cascades to title, status, badges, names, prices */
-  --font-sans: 'Coiny', Georgia, 'Times New Roman', serif;
-  --font-head: 'Coiny', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Bevan', Georgia, 'Times New Roman', serif;
+  --font-head: 'Bevan', Georgia, 'Times New Roman', serif;
   min-height: 100dvh;
   position: relative;
   background: #fff;
 }
 
-/* internalbg — fixed, centered, sits behind the shirt cards (mobile + pc) */
+/* balloon — fixed, centered, sits behind the shirt cards (mobile + pc) */
 .market-inner-bg {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(86vw, 640px);
-  aspect-ratio: 1.439;
-  background: url('/pics/internalbg.png') center / contain no-repeat;
+  height: min(74vh, 700px);
+  aspect-ratio: 0.462;   /* balloon is tall/portrait */
+  background: url('/pics/balloon.jfif') center / contain no-repeat;
   z-index: 0;            /* above white bg, behind the z-index:1 content/cards */
   pointer-events: none;
 }
