@@ -338,16 +338,13 @@ body {
   background: #fff;
 }
 
-/* balloon — fixed, centered, sits behind the shirt cards (mobile + pc) */
+/* balloon — full-screen backdrop. z-index 0 + first in DOM means it paints
+   under the mascots (also z-index 0, later in DOM) and under the cards (z-index 1) */
 .market-inner-bg {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  height: min(74vh, 700px);
-  aspect-ratio: 0.462;   /* balloon is tall/portrait */
-  background: url('/pics/balloon.jfif') center / contain no-repeat;
-  z-index: 0;            /* above white bg, behind the z-index:1 content/cards */
+  inset: 0;
+  background: url('/pics/balloon.jfif') center / cover no-repeat;
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -397,13 +394,11 @@ body {
   mix-blend-mode: multiply;
 }
 
-/* mobile: AWGE-style — mascots grow and bleed half off the viewport edges,
-   so they frame the shirts instead of overlapping them */
+/* mobile: keep all 3 figures per side fully on-screen and centered in their
+   column — no off-screen bleed (was clipping characters against overflow:hidden) */
 @media (max-width: 479px) {
-  .mascot-col { width: 30vw; padding: 12vh 0; }
-  .mascot-col img { width: 115%; max-height: 20vh; }
-  .mascot-col.left img  { transform: translateX(-38%); }
-  .mascot-col.right img { transform: translateX(38%); }
+  .mascot-col { width: 24vw; padding: 6vh 0; }
+  .mascot-col img { width: 100%; max-height: 16vh; transform: none; }
 }
 
 /* ── Scrollable content ── */
