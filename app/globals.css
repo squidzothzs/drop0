@@ -364,6 +364,10 @@ body {
   padding: 40px 16px 0;
   user-select: none;
 }
+/* pc: logo reads big, like a poster header */
+@media (min-width: 768px) {
+  .market-logo { width: min(600px, 46vw); padding-top: 24px; }
+}
 
 /* ── Scrollable content ── */
 .market-content {
@@ -695,13 +699,14 @@ body {
   gap: 16px;
   align-items: stretch;
 }
+/* Archivo (not Anton) here — condensed display reads "stuck" at this size */
 .claim-headline {
-  font-family: var(--font-head);
-  font-size: clamp(30px, 9vw, 40px);
+  font-family: var(--font-sans);
+  font-size: clamp(26px, 8vw, 36px);
   font-weight: 900;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  line-height: 1;
+  line-height: 1.1;
   text-align: center;
   color: #fff;
 }
