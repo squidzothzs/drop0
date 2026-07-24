@@ -390,7 +390,11 @@ body {
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #fff;   /* darker grey reads on the blur without any glow */
+  color: #fff;   /* white over the blurred photo (tablet/pc) */
+}
+/* mobile: balloon bg is light, so black reads better */
+@media (max-width: 767px) {
+  .market-status-strip { color: #111; }
 }
 .status-dot {
   width: 7px; height: 7px;

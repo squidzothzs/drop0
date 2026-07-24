@@ -11,7 +11,6 @@ function App() {
   const [entered, setEntered] = useState(false) // per-visitor: passed the LIVE gate
 
   // status is set from the admin panel and shared across all visitors
-  return <MarketplaceView /> // TEMP preview override — remove before push
   if (appState === null) return null // still loading — blank beats flashing 'closed'
   if (appState === 'siteClosed') return <SiteClosedView />
 
