@@ -1,6 +1,6 @@
-/* Bevan — free heavy slab-serif display (Google Fonts).
-   @import must stay at the very top of the file. */
-@import url('https://fonts.googleapis.com/css2?family=Bevan&display=swap');
+/* Brand type (Google Fonts): Anton = heavy condensed drop-poster display,
+   Archivo = clean grotesque for UI/body. @import must stay at the top. */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800;900&display=swap');
 
 /* ─── TOKENS ────────────────────────────────────────── */
 :root {
@@ -9,9 +9,8 @@
   --heat:  #e8472b;
   --grey:  #8a8a8a;
 
-  /* AWGE-style: one heavy geometric sans everywhere */
-  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-head: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+  --font-sans: 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-head: 'Anton', 'Archivo', Arial, sans-serif;
 }
 
 /* ─── RESET ─────────────────────────────────────────── */
@@ -329,10 +328,6 @@ body {
 
 /* ─── MARKETPLACE ───────────────────────────────────── */
 .market-root {
-  /* Coiny display face across the whole shop — children read these vars, so
-     re-pointing them here cascades to title, status, badges, names, prices */
-  --font-sans: 'Bevan', Georgia, 'Times New Roman', serif;
-  --font-head: 'Bevan', Georgia, 'Times New Roman', serif;
   min-height: 100dvh;
   position: relative;
   background: #fff;
@@ -360,15 +355,13 @@ body {
 }
 
 /* ── Page title — AWGE-style heavy centered wordmark ── */
-.market-page-title {
-  font-family: var(--font-head);
-  font-size: clamp(30px, 4.5vw, 46px);
-  font-weight: 900;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #111;
-  text-align: center;
-  padding: 44px 16px 0;
+/* hand-drawn MOGI logo (replaces the wordmark) */
+.market-logo {
+  display: block;
+  width: min(340px, 72vw);
+  height: auto;
+  margin: 0 auto;
+  padding: 40px 16px 0;
   user-select: none;
 }
 
@@ -544,26 +537,21 @@ body {
   justify-content: center;
 }
 /* AWGE chip: black pill, white bold caps */
-.badge {
-  font-family: var(--font-sans);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 5px 12px;
+/* hand-drawn white status word on a black pill so it stays legible on any bg */
+.badge-img {
+  height: 30px;
+  width: auto;
+  display: block;
+  padding: 6px 15px;
   border-radius: 999px;
   background: #111;
-  color: #fff;
-  line-height: 1.2;
 }
-/* reserved chip stays monochrome; the pulse is what marks it live */
-.badge-claim { animation: reserved-pulse 1.6s ease-in-out infinite; }
 
 .card-name {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #111;
   line-height: 1.4;

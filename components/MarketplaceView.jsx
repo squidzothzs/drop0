@@ -26,7 +26,7 @@ export default function MarketplaceView() {
       {/* ── Scrollable main content ── */}
       <div className="market-content">
 
-        <div className="market-page-title">MOGI</div>
+        <img className="market-logo" src="/pics/logo-crop.png" alt="MOGI" draggable="false" />
 
         <div className="market-status-strip">
           <span className={`status-dot${isSoldOut ? ' grey' : ''}`} />

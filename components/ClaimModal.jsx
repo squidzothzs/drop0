@@ -97,7 +97,7 @@ export default function ClaimModal({ item, onClose }) {
       <div className="claim-card" role="dialog" aria-modal="true" aria-label={`Claim MOGI #${item.num}/20`}>
 
         <button className="claim-close" onClick={handleClose} aria-label="Close">✕</button>
-        <div className="claim-eyebrow">MOGI · DROP 0 · ONE OF TWENTY</div>
+        <div className="claim-eyebrow">MOGI drop 0 · Piece #{item.num}</div>
 
         {/* 3D shirt — tap to turn */}
         <div className="tee-3d-wrap" onClick={() => setShowBack(b => !b)} title="Tap to turn">

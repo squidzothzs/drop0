@@ -41,9 +41,9 @@ export default function ItemCard({ item, onClick }) {
 
       <div className="card-body">
         <div className="card-badges">
-          {isAvailable && <span className="badge badge-avail">UNCLAIMED</span>}
-          {isReserved  && <span className="badge badge-claim">CLAIMING</span>}
-          {isSold      && <span className="badge badge-sold">CLAIMED</span>}
+          {isAvailable && <img className="badge-img" src="/pics/badge-unclaimed.png" alt="Unclaimed" draggable="false" />}
+          {isReserved  && <img className="badge-img" src="/pics/badge-claiming.png" alt="Claiming" draggable="false" />}
+          {isSold      && <img className="badge-img" src="/pics/badge-claimed.png" alt="Claimed" draggable="false" />}
         </div>
 
         <span className="card-name">MOGI #{num} / 20</span>
