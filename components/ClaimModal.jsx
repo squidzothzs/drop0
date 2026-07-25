@@ -99,18 +99,22 @@ export default function ClaimModal({ item, onClose }) {
         <button className="claim-close" onClick={handleClose} aria-label="Close">✕</button>
         <div className="claim-eyebrow">MOGI drop 0 · Piece #{item.num}</div>
 
-        {/* 3D shirt — tap to turn */}
-        <div className="tee-3d-wrap" onClick={() => setShowBack(b => !b)} title="Tap to turn">
-          <div className={`tee-3d${showBack ? ' tee-showing-back' : ''}`}>
-            <div className="tee-face">
-              <img src="/pics/shirtfront-Photoroom.png" alt="MOGI Drop 0 shirt — front" />
+        {/* 3D shirt — tap to turn. The claimed page is the artwork alone, no tee. */}
+        {step !== 4 && (
+          <>
+            <div className="tee-3d-wrap" onClick={() => setShowBack(b => !b)} title="Tap to turn">
+              <div className={`tee-3d${showBack ? ' tee-showing-back' : ''}`}>
+                <div className="tee-face">
+                  <img src="/pics/shirtfront-Photoroom.png" alt="MOGI Drop 0 shirt — front" />
+                </div>
+                <div className="tee-face tee-face-back">
+                  <img src="/pics/shirtback-Photoroom2.png" alt="MOGI Drop 0 shirt — back" />
+                </div>
+              </div>
             </div>
-            <div className="tee-face tee-face-back">
-              <img src="/pics/shirtback-Photoroom2.png" alt="MOGI Drop 0 shirt — back" />
-            </div>
-          </div>
-        </div>
-        <div className="tee-hint">{showBack ? 'back' : 'front'} · tap to turn</div>
+            <div className="tee-hint">{showBack ? 'back' : 'front'} · tap to turn</div>
+          </>
+        )}
 
         {/* ── GONE — someone claimed it first ── */}
         {gone && (
@@ -225,13 +229,23 @@ export default function ClaimModal({ item, onClose }) {
                   href="https://www.instagram.com/mogi.exists/"
                   target="_blank" rel="noopener noreferrer"
                   style={{ textAlign: 'center', textDecoration: 'none' }}
-                  onClick={playClick}
+                  onClick={() => { playClick(); setStep(4) }}
                 >
                   DM @mogi.exists to settle ↗
                 </a>
               </>
             )}
           </div>
+        )}
+
+        {/* ── STEP 4 — CLAIMED (after they head to the DM) ── */}
+        {step === 4 && (
+          <img
+            className="claim-success-art"
+            src="/pics/claimed-success.png"
+            alt={`Claimed — piece #${item.num} of 20 is yours`}
+            draggable="false"
+          />
         )}
 
       </div>

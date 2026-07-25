@@ -585,6 +585,10 @@ body {
   color: #fff;
   word-break: break-word;
 }
+/* mobile sits on the light balloon bg — black reads, white disappears */
+@media (max-width: 767px) {
+  .card-claimer { color: #000; }
+}
 
 /* ─── CLAIM MODAL (editorial) ───────────────────────── */
 .modal-overlay {
@@ -647,6 +651,13 @@ body {
   color: #ccc;
   text-align: center;
   margin-bottom: 16px;
+}
+
+/* claimed page — the hand-drawn artwork is the whole screen, card is already black */
+.claim-success-art {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* 3D tee — click to turn */

@@ -9,8 +9,9 @@ export default function ItemCard({ item, onClick }) {
   const isReserved  = status === 'claiming' || status === 'claimedUnpaid' // unclickable, no cross
   const hasDetails  = status === 'claimedUnpaid' || status === 'soldPaid' // buyer submitted details
 
-  // shown on the piece: the @ if they opted in, otherwise anonymous
-  const claimer = publicHandle || 'anonymous'
+  // shown on the piece: the @ if they opted in, otherwise anonymous.
+  // buyers type the handle with or without the @ — normalise so it's never doubled.
+  const claimer = publicHandle ? `@${publicHandle.replace(/^@+/, '')}` : 'anonymous'
 
   const handleClick = useCallback(() => {
     if (!isAvailable) return
