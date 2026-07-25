@@ -457,6 +457,10 @@ body {
 }
 .item-card.card-sold,
 .item-card.card-reserved { cursor: default; }
+/* your own piece stays openable, so it stays lit and clickable */
+.item-card.card-mine { cursor: pointer; }
+.item-card.card-mine .card-face img { filter: none; opacity: 1; }
+.item-card.card-mine .taken-cross { display: none; }
 
 .card-thumb {
   width: 100%;
@@ -567,10 +571,6 @@ body {
 }
 .card-sold .card-name { color: #888; }
 .card-reserved .card-name { color: #fff; }   /* claiming mode reads on the blur (pc) */
-/* mobile: balloon bg is light — darker gray reads better than white */
-@media (max-width: 767px) {
-  .card-reserved .card-name { color: #555; }
-}
 
 .card-price {
   font-size: 12px;
@@ -585,9 +585,12 @@ body {
   color: #fff;
   word-break: break-word;
 }
-/* mobile sits on the light balloon bg — black reads, white disappears */
+/* mobile: piece number and claimer stay white in every state, no exceptions */
 @media (max-width: 767px) {
-  .card-claimer { color: #000; }
+  .card-name,
+  .card-sold .card-name,
+  .card-reserved .card-name,
+  .card-claimer { color: #fff; }
 }
 
 /* ─── CLAIM MODAL (editorial) ───────────────────────── */

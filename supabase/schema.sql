@@ -32,8 +32,10 @@ create table public.piece_private (
   phone       text,          -- for shipping — never goes in the public table
   address     text,          -- for shipping — never goes in the public table
   claim_token uuid,          -- the buyer's secret for release_claim; must not be public
-  claimed_at  timestamptz
+  claimed_at  timestamptz,
+  device_id   text           -- random per-browser id; enforces one live claim per device
 );
+create index on public.piece_private (device_id);
 
 -- seed 20 pieces (#01..#20) + their private rows
 insert into public.pieces (id, num)
@@ -55,18 +57,31 @@ alter table public.piece_private enable row level security;
 -- The conditional UPDATE on pieces is the lock: it touches exactly one row or zero.
 
 -- reserve an available piece; returns a claim token, or null if already taken
-create or replace function public.claim_piece(p_id int)
+-- (or if this device is already holding a piece it hasn't paid for).
+-- the old single-arg version must go, or a caller could use it to skip the guard
+drop function if exists public.claim_piece(int);
+
+create or replace function public.claim_piece(p_id int, p_device text)
 returns uuid
 language plpgsql security definer set search_path = public as $$
 declare token uuid := gen_random_uuid();
 begin
+  -- one live claim per device; frees up once the piece is marked soldPaid
+  if p_device is not null and exists (
+    select 1 from public.piece_private pv
+    join public.pieces p on p.id = pv.piece_id
+    where pv.device_id = p_device and p.status in ('claiming','claimedUnpaid')
+  ) then
+    return null;
+  end if;
+
   update public.pieces set status = 'claiming'
    where id = p_id and status = 'available';
   if not found then
     return null;            -- someone beat them to it
   end if;
   update public.piece_private
-     set claim_token = token, claimed_at = now()
+     set claim_token = token, claimed_at = now(), device_id = p_device
    where piece_id = p_id;
   return token;
 end $$;
@@ -110,13 +125,13 @@ begin
   end if;
   update public.pieces set status = 'available', public_handle = null where id = p_id;
   update public.piece_private
-     set holder = null, holder_ig = null, size = null,
-         phone = null, address = null, claim_token = null, claimed_at = null
+     set holder = null, holder_ig = null, size = null, phone = null,
+         address = null, claim_token = null, claimed_at = null, device_id = null
    where piece_id = p_id;
   return true;
 end $$;
 
-grant execute on function public.claim_piece(int)               to anon, authenticated;
+grant execute on function public.claim_piece(int,text)          to anon, authenticated;
 grant execute on function public.confirm_claim(int,uuid,text,text,boolean,text) to anon, authenticated;
 grant execute on function public.release_claim(int,uuid)        to anon, authenticated;
 
@@ -160,8 +175,8 @@ select cron.schedule('release-expired-unpaid', '* * * * *', $$
      where id in (select piece_id from expired)
   )
   update public.piece_private
-     set holder = null, holder_ig = null, size = null,
-         phone = null, address = null, claim_token = null, claimed_at = null
+     set holder = null, holder_ig = null, size = null, phone = null,
+         address = null, claim_token = null, claimed_at = null, device_id = null
    where piece_id in (select piece_id from expired);
 $$);
 
@@ -175,6 +190,6 @@ select cron.schedule('release-stale-claiming', '* * * * *', $$
     update public.pieces set status = 'available'
      where id in (select piece_id from stale)
   )
-  update public.piece_private set claim_token = null, claimed_at = null
+  update public.piece_private set claim_token = null, claimed_at = null, device_id = null
    where piece_id in (select piece_id from stale);
 $$);

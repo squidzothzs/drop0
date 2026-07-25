@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useStore } from '../lib/useStore'
 import { playSuccess, playClick, playOpen } from '../lib/audio'
+import { initialStep } from '../lib/claimStep'
 
 const SIZES = ['S', 'M', 'L', 'XL']
 const COUNTDOWN_SECS = 30 * 60  // 30 minutes
@@ -13,18 +14,24 @@ function fmt(secs) {
 }
 
 export default function ClaimModal({ item, onClose }) {
-  const { startClaim, confirmClaim, releaseClaim } = useStore()
-  const [step, setStep] = useState(1)  // 1 | 2 | 3
+  const { startClaim, confirmClaim, releaseClaim, state } = useStore()
+  const held = state.myClaims[item.id]
+  const heldNum = state.items.find(i => i.id === state.heldPieceId)?.num
+  const [step, setStep] = useState(() => initialStep(item.status, held))  // 1 | 2 | 3 | 4
   const [showBack, setShowBack] = useState(false)
   const [name, setName] = useState('')
   const [size, setSize] = useState('M')
   const [ig, setIg] = useState('')
   const [showIg, setShowIg] = useState(false) // default anonymous; tick to show IG
-  const [remaining, setRemaining] = useState(COUNTDOWN_SECS)
+  // resume the real countdown on reopen — `at` is when the reservation started
+  const [remaining, setRemaining] = useState(() =>
+    held?.at ? Math.max(0, COUNTDOWN_SECS - Math.floor((Date.now() - held.at) / 1000)) : COUNTDOWN_SECS
+  )
   const [expired, setExpired] = useState(false)
   const [gone, setGone] = useState(false)   // someone claimed it first
   const [busy, setBusy] = useState(false)
-  const [reserved, setReserved] = useState(false) // we already hold the reservation
+  const [blocked, setBlocked] = useState(false) // already holding another piece
+  const [reserved, setReserved] = useState(!!held) // we already hold the reservation
   const [copied, setCopied] = useState(false)
   const timerRef = useRef(null)
 
@@ -43,6 +50,11 @@ export default function ClaimModal({ item, onClose }) {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = prev }
   }, [])
+
+  // admin marking it paid lands here via realtime — that's what shows the claimed page
+  useEffect(() => {
+    if (item.status === 'soldPaid' && held) setStep(4)
+  }, [item.status, held])
 
   // start countdown on step 3 (cosmetic — server cron is the real authority)
   useEffect(() => {
@@ -83,9 +95,9 @@ export default function ClaimModal({ item, onClose }) {
     if (busy) return
     if (reserved) { playOpen(); setStep(2); return } // came back — keep the reservation
     setBusy(true)
-    const { ok } = await startClaim(item.id)
+    const { ok, reason } = await startClaim(item.id)
     setBusy(false)
-    if (!ok) { setGone(true); return } // someone beat them to it
+    if (!ok) { reason === 'holding' ? setBlocked(true) : setGone(true); return }
     setReserved(true)
     playOpen()
     setStep(2)
@@ -93,7 +105,7 @@ export default function ClaimModal({ item, onClose }) {
 
   return (
     // once a reservation is held (step ≥ 2), a stray overlay click must not release it — only ✕ closes
-    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget && (gone || step === 1)) handleClose() }}>
+    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget && (gone || blocked || step === 1 || step === 4)) handleClose() }}>
       <div className="claim-card" role="dialog" aria-modal="true" aria-label={`Claim MOGI #${item.num}/20`}>
 
         <button className="claim-close" onClick={handleClose} aria-label="Close">✕</button>
@@ -127,8 +139,20 @@ export default function ClaimModal({ item, onClose }) {
           </div>
         )}
 
+        {/* ── BLOCKED — this device already holds an unpaid piece ── */}
+        {blocked && (
+          <div className="claim-step">
+            <h2 className="claim-headline">One at a time</h2>
+            <p className="claim-body">
+              You're still holding {heldNum ? `#${heldNum}` : 'another piece'}. Settle that one first —
+              once it's marked paid you can claim another.
+            </p>
+            <button className="claim-btn solid" onClick={() => { playClick(); handleClose() }}>Back to the drop</button>
+          </div>
+        )}
+
         {/* ── STEP 1 — THE INVITATION ── */}
-        {!gone && step === 1 && (
+        {!gone && !blocked && step === 1 && (
           <div className="claim-step">
             <h2 className="claim-headline">Piece #{item.num}</h2>
             <div className="claim-price">HKD 380</div>
@@ -146,7 +170,7 @@ export default function ClaimModal({ item, onClose }) {
         )}
 
         {/* ── STEP 2 — YOUR DETAILS ── */}
-        {!gone && step === 2 && (
+        {!gone && !blocked && step === 2 && (
           <div className="claim-step">
             <h2 className="claim-headline">Who holds this piece?</h2>
             <p className="claim-body">
@@ -197,7 +221,7 @@ export default function ClaimModal({ item, onClose }) {
         )}
 
         {/* ── STEP 3 — IT'S YOURS ── */}
-        {step === 3 && (
+        {!blocked && step === 3 && (
           <div className="claim-step">
             {expired ? (
               <>
@@ -229,7 +253,7 @@ export default function ClaimModal({ item, onClose }) {
                   href="https://www.instagram.com/mogi.exists/"
                   target="_blank" rel="noopener noreferrer"
                   style={{ textAlign: 'center', textDecoration: 'none' }}
-                  onClick={() => { playClick(); setStep(4) }}
+                  onClick={playClick}
                 >
                   DM @mogi.exists to settle ↗
                 </a>
