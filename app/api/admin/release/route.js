@@ -15,7 +15,8 @@ export async function POST(req) {
   // wipe the buyer's PII from the private table too
   const { error: pErr } = await supabaseAdmin
     .from('piece_private')
-    .update({ holder: null, holder_ig: null, size: null, phone: null, address: null, claim_token: null, claimed_at: null })
+    // device_id must go too, or the buyer's browser stays blocked from claiming anything else
+    .update({ holder: null, holder_ig: null, size: null, phone: null, address: null, claim_token: null, claimed_at: null, device_id: null })
     .eq('piece_id', id)
   if (pErr) return NextResponse.json({ ok: false, error: pErr.message }, { status: 500 })
   return NextResponse.json({ ok: true })
