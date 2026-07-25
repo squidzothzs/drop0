@@ -116,7 +116,10 @@ export default function ClaimModal({ item, onClose }) {
       <div className="claim-card" role="dialog" aria-modal="true" aria-label={`Claim MOGI #${item.num}/20`}>
 
         <button className="claim-close" onClick={handleClose} aria-label="Close">✕</button>
-        <div className="claim-eyebrow">MOGI drop 0 · Piece #{item.num}</div>
+        {/* on the claimed page the number is struck out and the artwork's arrow points at it */}
+        <div className={`claim-eyebrow${step === 4 ? ' claim-eyebrow-claimed' : ''}`}>
+          MOGI drop 0 · {step === 4 ? <s>Piece #{item.num}</s> : `Piece #${item.num}`}
+        </div>
 
         {/* 3D shirt — tap to turn. The claimed page is the artwork alone, no tee. */}
         {step !== 4 && (

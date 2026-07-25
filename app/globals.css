@@ -657,10 +657,26 @@ body {
 }
 
 /* claimed page — the hand-drawn artwork is the whole screen, card is already black */
+.claim-eyebrow-claimed {
+  color: #fff;
+  margin-bottom: 0;
+}
+.claim-eyebrow-claimed s {
+  text-decoration-thickness: 1px;
+}
 .claim-success-art {
   display: block;
   width: 100%;
   height: auto;
+  /* The artwork has its own short dash above the arrow, drawn to cross out the piece
+     number. It can't: it scales with the image while the number is fixed-size text, so
+     it only lined up at one screen width. Cut it off (clean gap at y=366/2360) and let
+     the real strikethrough above do the crossing — the arrow still points at it, since
+     the tip sits at 60% across and the struck words are always the right half of a
+     centred line. */
+  clip-path: inset(15.51% 0 0 0);
+  /* reclaim the clipped strip: 366/1640 of the image's own width, which is the card's */
+  margin-top: -22.32%;
 }
 
 /* 3D tee — click to turn */
