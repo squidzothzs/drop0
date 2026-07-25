@@ -130,6 +130,7 @@ insert into public.site_config (id, status) values (1, 'closed')
   on conflict (id) do nothing;
 
 alter table public.site_config enable row level security;
+drop policy if exists "site_config public read" on public.site_config;
 create policy "site_config public read"
   on public.site_config for select using (true);
 -- writes only via the service-role admin route; no anon write policy.
@@ -137,8 +138,12 @@ create policy "site_config public read"
 -- ── realtime ────────────────────────────────────────────
 -- push row changes to subscribed browsers. piece_private is deliberately NOT
 -- published — its rows must never reach a client.
+-- site_config survives a re-run (create-if-not-exists), so it may already be a
+-- member — a plain ADD TABLE would abort the rest of this file.
 alter publication supabase_realtime add table public.pieces;
-alter publication supabase_realtime add table public.site_config;
+do $$ begin
+  alter publication supabase_realtime add table public.site_config;
+exception when duplicate_object then null; end $$;
 
 -- ── auto-expiry (pg_cron) ───────────────────────────────
 -- Enable the pg_cron extension first: Dashboard → Database → Extensions → pg_cron.
