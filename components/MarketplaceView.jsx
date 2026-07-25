@@ -6,7 +6,7 @@ import ClaimModal from './ClaimModal'
 
 export default function MarketplaceView() {
   const { state } = useStore()
-  const { items, remainingCount, appState, myClaims } = state
+  const { items, remainingCount, appState, myClaims, now } = state
   const isSoldOut = appState === 'soldOut'
   // hold the id, not the row: the modal must see realtime status changes
   // (that's how "mark paid" flips an open modal to the claimed page)
@@ -42,7 +42,7 @@ export default function MarketplaceView() {
         <main className="market-grid-wrap">
           <div className="market-grid">
             {items.map(item => (
-              <ItemCard key={item.id} item={item} mine={!!myClaims[item.id]} onClick={handleCardClick} />
+              <ItemCard key={item.id} item={item} mine={!!myClaims[item.id]} now={now} onClick={handleCardClick} />
             ))}
           </div>
 

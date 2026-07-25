@@ -9,7 +9,7 @@ export async function POST(req) {
   }
   const { error } = await supabaseAdmin
     .from('pieces')
-    .update({ status: 'available', public_handle: null })
+    .update({ status: 'available', public_handle: null, claim_expires_at: null })
     .eq('id', id)
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
   // wipe the buyer's PII from the private table too

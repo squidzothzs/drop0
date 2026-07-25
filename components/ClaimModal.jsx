@@ -4,15 +4,10 @@ import { useStore } from '../lib/useStore'
 import { playSuccess, playClick, playOpen } from '../lib/audio'
 import { initialStep, holdsReservation } from '../lib/claimStep'
 import { claimRef } from '../lib/claimRef'
+import { fmt } from '../lib/countdown'
 
 const SIZES = ['S', 'M', 'L', 'XL']
 const COUNTDOWN_SECS = 30 * 60  // 30 minutes
-
-function fmt(secs) {
-  const m = Math.floor(secs / 60).toString().padStart(2, '0')
-  const s = (secs % 60).toString().padStart(2, '0')
-  return `${m}:${s}`
-}
 
 export default function ClaimModal({ item, onClose }) {
   const { startClaim, confirmClaim, releaseClaim, state } = useStore()

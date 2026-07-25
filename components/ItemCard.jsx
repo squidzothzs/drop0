@@ -1,8 +1,9 @@
 'use client'
 import { useCallback } from 'react'
 import { playClick } from '../lib/audio'
+import { secsLeft, fmt } from '../lib/countdown'
 
-export default function ItemCard({ item, mine = false, onClick }) {
+export default function ItemCard({ item, mine = false, now, onClick }) {
   const { num, status, publicHandle } = item
   const isSold      = status === 'soldPaid'
   const isAvailable = status === 'available'
@@ -14,6 +15,8 @@ export default function ItemCard({ item, mine = false, onClick }) {
   // shown on the piece: the @ if they opted in, otherwise anonymous.
   // buyers type the handle with or without the @ — normalise so it's never doubled.
   const claimer = publicHandle ? `@${publicHandle.replace(/^@+/, '')}` : 'anonymous'
+  // only a live reservation has a deadline, so available and paid pieces show nothing
+  const left = secsLeft(item.claimExpiresAt, now)
 
   const handleClick = useCallback(() => {
     if (!canOpen) return
@@ -61,6 +64,10 @@ export default function ItemCard({ item, mine = false, onClick }) {
           <div className="card-claimer">{hasDetails ? `held by ${claimer}` : 'being claimed…'}</div>
         )}
         {!mine && isSold && <div className="card-claimer">held by {claimer}</div>}
+
+        {left !== null && isReserved && (
+          <div className="card-timer">{left > 0 ? `${fmt(left)} left` : 'lapsing…'}</div>
+        )}
       </div>
     </div>
   )

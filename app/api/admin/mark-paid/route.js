@@ -10,7 +10,8 @@ export async function POST(req) {
   }
   const { error } = await supabaseAdmin
     .from('pieces')
-    .update({ status: 'soldPaid' })
+    // paid pieces have no deadline; a leftover one keeps every visitor's clock ticking
+    .update({ status: 'soldPaid', claim_expires_at: null })
     .eq('id', id)
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })

@@ -585,6 +585,16 @@ body {
   color: #fff;
   word-break: break-word;
 }
+/* how long this reservation has left before the piece returns to the floor */
+.card-timer {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;  /* stops the card twitching every second */
+  color: #fff;
+  opacity: 0.75;
+}
+
 /* mobile: piece number and claimer stay white in every state, no exceptions */
 @media (max-width: 767px) {
   .card-name,
