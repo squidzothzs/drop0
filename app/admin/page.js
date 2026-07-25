@@ -73,6 +73,7 @@ export default function AdminPage() {
     load() // refetch immediately; don't wait on realtime for our own action
   }, [password, load])
 
+  const claiming = pieces.filter(p => p.status === 'claiming')
   const claimed = pieces.filter(p => p.status === 'claimedUnpaid')
   const sold = pieces.filter(p => p.status === 'soldPaid')
 
@@ -103,6 +104,20 @@ export default function AdminPage() {
           )
         })}
       </div>
+
+      <div style={{ fontSize: 11, opacity: 0.6, margin: '22px 0 4px', letterSpacing: '0.1em' }}>
+        MID-CLAIM ({claiming.length})
+      </div>
+      {claiming.length === 0 && <div style={{ ...S.row, opacity: 0.5 }}>none</div>}
+      {claiming.map(p => (
+        <div key={p.id} style={S.row}>
+          <span style={S.num}>#{p.num}</span>
+          <span style={{ ...S.tag, background: TAG_COLOR[p.status] }}>{p.status}</span>
+          {/* no details yet — they're still on the form */}
+          <span style={{ flex: 1, opacity: 0.5 }}>form not submitted</span>
+          <button style={S.ghost} onClick={() => post('release', { id: p.id })}>release</button>
+        </div>
+      ))}
 
       <div style={{ fontSize: 11, opacity: 0.6, margin: '22px 0 4px', letterSpacing: '0.1em' }}>
         AWAITING PAYMENT ({claimed.length})
