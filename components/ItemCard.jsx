@@ -3,14 +3,14 @@ import { useCallback } from 'react'
 import { playClick } from '../lib/audio'
 
 export default function ItemCard({ item, onClick }) {
-  const { num, status, holder, holderIg, showIg } = item
+  const { num, status, publicHandle } = item
   const isSold      = status === 'soldPaid'
   const isAvailable = status === 'available'
   const isReserved  = status === 'claiming' || status === 'claimedUnpaid' // unclickable, no cross
-  const hasHolder   = !!holder
+  const hasDetails  = status === 'claimedUnpaid' || status === 'soldPaid' // buyer submitted details
 
   // shown on the piece: the @ if they opted in, otherwise anonymous
-  const claimer = showIg && holderIg ? holderIg : 'anonymous'
+  const claimer = publicHandle || 'anonymous'
 
   const handleClick = useCallback(() => {
     if (!isAvailable) return
@@ -41,16 +41,16 @@ export default function ItemCard({ item, onClick }) {
 
       <div className="card-body">
         <div className="card-badges">
-          {isAvailable && <span className="badge badge-avail">UNCLAIMED</span>}
-          {isReserved  && <span className="badge badge-claim">CLAIMING</span>}
-          {isSold      && <span className="badge badge-sold">CLAIMED</span>}
+          {isAvailable && <img className="badge-img" src="/pics/badge-unclaimed.png" alt="Unclaimed" draggable="false" />}
+          {isReserved  && <img className="badge-img" src="/pics/badge-claiming.png" alt="Claiming" draggable="false" />}
+          {isSold      && <img className="badge-img" src="/pics/badge-claimed.png" alt="Claimed" draggable="false" />}
         </div>
 
         <span className="card-name">MOGI #{num} / 20</span>
 
         {isAvailable && <div className="card-price">HKD 380</div>}
         {isReserved && (
-          <div className="card-claimer">{hasHolder ? `held by ${claimer}` : 'being claimed…'}</div>
+          <div className="card-claimer">{hasDetails ? `held by ${claimer}` : 'being claimed…'}</div>
         )}
         {isSold && <div className="card-claimer">held by {claimer}</div>}
       </div>

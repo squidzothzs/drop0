@@ -27,11 +27,18 @@ export default function AdminPage() {
   const [msg, setMsg] = useState('')
 
   const load = useCallback(async () => {
-    const { data } = await supabase.from('pieces').select('*').order('id')
-    if (data) setPieces(data)
+    // site status is public; buyer PII comes from the password-gated route only
     const { data: cfg } = await supabase.from('site_config').select('status').eq('id', 1).single()
     if (cfg) setSiteStatus(cfg.status)
-  }, [])
+    if (!password) { setPieces([]); return }
+    const res = await fetch('/api/admin/list', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ password }),
+    })
+    const json = await res.json().catch(() => ({}))
+    setPieces(res.ok ? (json.pieces || []) : [])
+  }, [password])
 
   // load + realtime so the panel tracks live claims and status changes
   useEffect(() => {

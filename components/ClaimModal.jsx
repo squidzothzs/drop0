@@ -97,7 +97,7 @@ export default function ClaimModal({ item, onClose }) {
       <div className="claim-card" role="dialog" aria-modal="true" aria-label={`Claim MOGI #${item.num}/20`}>
 
         <button className="claim-close" onClick={handleClose} aria-label="Close">✕</button>
-        <div className="claim-eyebrow">MOGI · DROP 0 · ONE OF TWENTY</div>
+        <div className="claim-eyebrow">MOGI drop 0 · Piece #{item.num}</div>
 
         {/* 3D shirt — tap to turn */}
         <div className="tee-3d-wrap" onClick={() => setShowBack(b => !b)} title="Tap to turn">
@@ -144,9 +144,9 @@ export default function ClaimModal({ item, onClose }) {
         {/* ── STEP 2 — YOUR DETAILS ── */}
         {!gone && step === 2 && (
           <div className="claim-step">
-            <h2 className="claim-headline">Stake your name</h2>
+            <h2 className="claim-headline">Who holds this piece?</h2>
             <p className="claim-body">
-              This goes on the permanent registry beneath the drop. Make it count.
+              Your name shows on the public list of the 20 owners. Enter it how you want it seen.
             </p>
             <div className="claim-form">
               <div className="claim-field">
