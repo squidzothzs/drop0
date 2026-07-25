@@ -31,6 +31,7 @@ export default function ClaimModal({ item, onClose }) {
   const [gone, setGone] = useState(false)   // someone claimed it first
   const [busy, setBusy] = useState(false)
   const [blocked, setBlocked] = useState(false) // already holding another piece
+  const [failed, setFailed] = useState('')      // the claim errored — not the same as taken
   const [reserved, setReserved] = useState(!!held) // we already hold the reservation
   const [copied, setCopied] = useState(false)
   const timerRef = useRef(null)
@@ -95,9 +96,14 @@ export default function ClaimModal({ item, onClose }) {
     if (busy) return
     if (reserved) { playOpen(); setStep(2); return } // came back — keep the reservation
     setBusy(true)
-    const { ok, reason } = await startClaim(item.id)
+    const { ok, reason, message } = await startClaim(item.id)
     setBusy(false)
-    if (!ok) { reason === 'holding' ? setBlocked(true) : setGone(true); return }
+    if (!ok) {
+      if (reason === 'holding') setBlocked(true)
+      else if (reason === 'error') setFailed(message || 'Something broke on our side.')
+      else setGone(true)
+      return
+    }
     setReserved(true)
     playOpen()
     setStep(2)
@@ -139,8 +145,20 @@ export default function ClaimModal({ item, onClose }) {
           </div>
         )}
 
+        {/* ── FAILED — the claim errored; the piece is still there ── */}
+        {failed && (
+          <div className="claim-step">
+            <h2 className="claim-headline">Couldn't reach the drop</h2>
+            <p className="claim-body">
+              #{item.num} is still available — this one's on us. Try again in a moment.
+            </p>
+            <p className="claim-body" style={{ opacity: 0.5, fontSize: 12 }}>{failed}</p>
+            <button className="claim-btn solid" onClick={() => { playClick(); setFailed('') }}>Try again</button>
+          </div>
+        )}
+
         {/* ── BLOCKED — this device already holds an unpaid piece ── */}
-        {blocked && (
+        {!failed && blocked && (
           <div className="claim-step">
             <h2 className="claim-headline">One at a time</h2>
             <p className="claim-body">
@@ -152,7 +170,7 @@ export default function ClaimModal({ item, onClose }) {
         )}
 
         {/* ── STEP 1 — THE INVITATION ── */}
-        {!gone && !blocked && step === 1 && (
+        {!gone && !blocked && !failed && step === 1 && (
           <div className="claim-step">
             <h2 className="claim-headline">Piece #{item.num}</h2>
             <div className="claim-price">HKD 380</div>
