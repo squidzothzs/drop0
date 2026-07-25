@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
+import { claimRef } from '../../../../lib/claimRef'
 
 // POST { password } — return pieces with buyer PII for fulfillment.
 // PII lives in piece_private (no anon access), so it can only be read here,
@@ -11,7 +12,7 @@ export async function POST(req) {
   }
   const { data, error } = await supabaseAdmin
     .from('pieces')
-    .select('id, num, status, piece_private(holder, holder_ig, size, phone, address)')
+    .select('id, num, status, piece_private(holder, holder_ig, size, phone, address, claim_token)')
     .order('id')
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
@@ -21,6 +22,8 @@ export async function POST(req) {
       id: p.id, num: p.num, status: p.status,
       holder: pv?.holder, holder_ig: pv?.holder_ig, size: pv?.size,
       phone: pv?.phone, address: pv?.address,
+      // the code the buyer quotes in the DM — never the token itself
+      ref: claimRef(pv?.claim_token),
     }
   })
   return NextResponse.json({ pieces })

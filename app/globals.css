@@ -872,6 +872,29 @@ select.claim-input option { background: #0d0d0d; color: #fff; }
 }
 
 /* the order line the buyer pastes into the settle DM */
+/* the code the buyer quotes in the DM — the one thing they must get right */
+.claim-ref {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 6px 0 2px;
+  font-family: var(--font-head);
+  font-size: clamp(30px, 11vw, 40px);
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  color: #fff;
+}
+.claim-ref span {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #888;
+}
+
 .claim-order-line {
   display: flex;
   flex-direction: column;

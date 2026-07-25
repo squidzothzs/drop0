@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useStore } from '../lib/useStore'
 import { playSuccess, playClick, playOpen } from '../lib/audio'
 import { initialStep, holdsReservation } from '../lib/claimStep'
+import { claimRef } from '../lib/claimRef'
 
 const SIZES = ['S', 'M', 'L', 'XL']
 const COUNTDOWN_SECS = 30 * 60  // 30 minutes
@@ -37,8 +38,11 @@ export default function ClaimModal({ item, onClose }) {
   const [copied, setCopied] = useState(false)
   const timerRef = useRef(null)
 
-  // what the buyer pastes into the settle DM so admin can match the claim
-  const orderLine = `MOGI drop 0 · piece #${item.num} · size ${size} · ${name.trim()}`
+  // What the buyer pastes into the settle DM. Only the piece and the ref — name and
+  // size are React state that comes back empty/default when they reopen the modal, so
+  // putting them here would print a confident lie. The admin panel has both, by ref.
+  const ref = claimRef(held?.token)
+  const orderLine = `MOGI drop 0 · piece #${item.num} · ref ${ref}`
   const copyOrderLine = useCallback(() => {
     navigator.clipboard?.writeText(orderLine).then(() => {
       setCopied(true)
@@ -265,9 +269,13 @@ export default function ClaimModal({ item, onClose }) {
                 <p className="claim-body" style={{ textAlign: 'center' }}>
                   Settle within thirty minutes or it returns to the floor. Keep this tab open.
                 </p>
+                <div className="claim-ref">
+                  <span>your claim code</span>
+                  {ref}
+                </div>
                 <button className="claim-order-line" onClick={copyOrderLine} type="button">
                   {orderLine}
-                  <span>{copied ? 'copied ✓' : 'tap to copy · paste it in the DM'}</span>
+                  <span>{copied ? 'copied ✓' : 'tap to copy · send this in the DM'}</span>
                 </button>
                 <a
                   className="claim-btn solid"
