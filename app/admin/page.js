@@ -37,7 +37,13 @@ export default function AdminPage() {
       body: JSON.stringify({ password }),
     })
     const json = await res.json().catch(() => ({}))
-    setPieces(res.ok ? (json.pieces || []) : [])
+    if (!res.ok) {
+      setPieces([])
+      setMsg(json.error === 'unauthorized' ? 'Wrong password.' : `Load failed: ${json.error || res.status}`)
+      return
+    }
+    setMsg('')
+    setPieces(json.pieces || [])
   }, [password])
 
   // load + realtime so the panel tracks live claims and status changes
