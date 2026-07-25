@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useStore } from '../lib/useStore'
 import { playSuccess, playClick, playOpen } from '../lib/audio'
-import { initialStep } from '../lib/claimStep'
+import { initialStep, holdsReservation } from '../lib/claimStep'
 
 const SIZES = ['S', 'M', 'L', 'XL']
 const COUNTDOWN_SECS = 30 * 60  // 30 minutes
@@ -32,7 +32,8 @@ export default function ClaimModal({ item, onClose }) {
   const [busy, setBusy] = useState(false)
   const [blocked, setBlocked] = useState(false) // already holding another piece
   const [failed, setFailed] = useState('')      // the claim errored — not the same as taken
-  const [reserved, setReserved] = useState(!!held) // we already hold the reservation
+  // a stored token alone must not count — a stale one would skip claim_piece entirely
+  const [reserved, setReserved] = useState(() => holdsReservation(item.status, held))
   const [copied, setCopied] = useState(false)
   const timerRef = useRef(null)
 
