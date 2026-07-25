@@ -11,6 +11,7 @@ const S = {
   btn: { fontFamily: 'monospace', fontSize: 11, padding: '5px 10px', border: '1px solid #111', background: '#111', color: '#fff', cursor: 'pointer' },
   ghost: { fontFamily: 'monospace', fontSize: 11, padding: '5px 10px', border: '1px solid #111', background: '#fff', color: '#111', cursor: 'pointer' },
   input: { fontFamily: 'monospace', fontSize: 14, padding: '10px 12px', border: '1px solid #111', width: '100%', marginBottom: 10 },
+  ref: { fontWeight: 900, letterSpacing: '0.08em', border: '1px dashed #bbb', padding: '2px 6px', fontSize: 12 },
 }
 const TAG_COLOR = { available: '#1d9e5e', claiming: '#d4831f', claimedUnpaid: '#c0392b', soldPaid: '#111' }
 
@@ -127,6 +128,8 @@ export default function AdminPage() {
         <div key={p.id} style={S.row}>
           <span style={S.num}>#{p.num}</span>
           <span style={{ ...S.tag, background: TAG_COLOR[p.status] }}>{p.status}</span>
+          {/* the code they quote in the DM — match this before marking paid */}
+          <span style={S.ref}>{p.ref}</span>
           <span style={{ flex: 1 }}>{p.holder} {p.holder_ig ? `· ${p.holder_ig}` : ''} {p.size ? `· ${p.size}` : ''}</span>
           <button style={S.btn} onClick={() => post('mark-paid', { id: p.id })}>mark paid</button>
           <button style={S.ghost} onClick={() => post('release', { id: p.id })}>release</button>
