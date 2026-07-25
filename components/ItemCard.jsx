@@ -50,6 +50,12 @@ export default function ItemCard({ item, mine = false, now, onClick }) {
       </div>
 
       <div className="card-body">
+        {/* between the tee and the badge — status-based, so the holder and everyone
+            else watch the same clock run down */}
+        {left !== null && isReserved && (
+          <div className="card-timer">{left > 0 ? `${fmt(left)} left` : 'lapsing…'}</div>
+        )}
+
         <div className="card-badges">
           {isAvailable && <img className="badge-img" src="/pics/badge-unclaimed.png" alt="Unclaimed" draggable="false" />}
           {isReserved  && <img className="badge-img" src="/pics/badge-claiming.png" alt="Claiming" draggable="false" />}
@@ -64,10 +70,6 @@ export default function ItemCard({ item, mine = false, now, onClick }) {
           <div className="card-claimer">{hasDetails ? `held by ${claimer}` : 'being claimed…'}</div>
         )}
         {!mine && isSold && <div className="card-claimer">held by {claimer}</div>}
-
-        {left !== null && isReserved && (
-          <div className="card-timer">{left > 0 ? `${fmt(left)} left` : 'lapsing…'}</div>
-        )}
       </div>
     </div>
   )
