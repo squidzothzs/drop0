@@ -18,7 +18,7 @@ export default function ClaimModal({ item, onClose }) {
   const [name, setName] = useState('')
   const [size, setSize] = useState('M')
   const [ig, setIg] = useState('')
-  const [showIg, setShowIg] = useState(false) // default anonymous; tick to show IG
+  const [showIg, setShowIg] = useState(true) // default shown; untick to stay anonymous
   // resume the real countdown on reopen — `at` is when the reservation started
   const [remaining, setRemaining] = useState(() =>
     held?.at ? Math.max(0, COUNTDOWN_SECS - Math.floor((Date.now() - held.at) / 1000)) : COUNTDOWN_SECS
@@ -221,7 +221,7 @@ export default function ClaimModal({ item, onClose }) {
                   <input
                     id="claim-ig" className="claim-input" type="text" maxLength={32}
                     placeholder="@handle"
-                    value={ig} onChange={e => setIg(e.target.value)} autoFocus
+                    value={ig} onChange={e => setIg(e.target.value)}
                   />
                 </div>
               )}

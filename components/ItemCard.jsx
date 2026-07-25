@@ -4,7 +4,7 @@ import { playClick } from '../lib/audio'
 import { secsLeft, fmt } from '../lib/countdown'
 
 export default function ItemCard({ item, mine = false, now, onClick }) {
-  const { num, status, publicHandle } = item
+  const { num, status, publicName, publicHandle } = item
   const isSold      = status === 'soldPaid'
   const isAvailable = status === 'available'
   const isReserved  = status === 'claiming' || status === 'claimedUnpaid' // unclickable, no cross
@@ -46,7 +46,8 @@ export default function ItemCard({ item, mine = false, now, onClick }) {
             <img src="/pics/shirtback-Photoroom2.png" alt={`MOGI #${num}/20 back`} loading="lazy" width="400" height="400" />
           </div>
         </div>
-        {isSold && <div className="taken-cross" aria-hidden="true" />}
+        {/* the stamp carries the display name, the line below carries the @handle */}
+        {isSold && <div className="taken-stamp" aria-hidden="true">held by<span>{publicName || 'anonymous'}</span></div>}
       </div>
 
       <div className="card-body">

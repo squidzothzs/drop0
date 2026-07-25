@@ -21,6 +21,10 @@ create table public.pieces (
   num           text not null,
   status        text not null default 'available'
                 check (status in ('available','claiming','claimedUnpaid','soldPaid')),
+  -- the display name stamped across a claimed piece. Public by design: the claim
+  -- form says it goes on the public list of the 20 owners. piece_private.holder
+  -- stays the private copy of record.
+  public_name   text,
   public_handle text,  -- shown on the piece; set only when the buyer opts in, else null
   -- when this reservation lapses. Public on purpose: it drives the countdown on every
   -- visitor's card, and a deadline says nothing about who is holding the piece.
@@ -111,6 +115,7 @@ begin
   -- 30 minutes to settle; must match release-expired-unpaid below
   update public.pieces
      set status = 'claimedUnpaid',
+         public_name = p_name,
          public_handle = case when p_show_ig then nullif(p_ig, '') else null end,
          claim_expires_at = now() + interval '30 minutes'
    where id = p_id;
@@ -131,7 +136,8 @@ begin
     return false;
   end if;
   update public.pieces
-     set status = 'available', public_handle = null, claim_expires_at = null
+     set status = 'available', public_name = null, public_handle = null,
+         claim_expires_at = null
    where id = p_id;
   update public.piece_private
      set holder = null, holder_ig = null, size = null, phone = null,
@@ -181,7 +187,8 @@ select cron.schedule('release-expired-unpaid', '* * * * *', $$
     where p.status = 'claimedUnpaid' and pv.claimed_at < now() - interval '30 minutes'
   ), _pub as (
     update public.pieces
-       set status = 'available', public_handle = null, claim_expires_at = null
+       set status = 'available', public_name = null, public_handle = null,
+         claim_expires_at = null
      where id in (select piece_id from expired)
   )
   update public.piece_private
