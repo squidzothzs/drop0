@@ -21,7 +21,10 @@ create table public.pieces (
   num           text not null,
   status        text not null default 'available'
                 check (status in ('available','claiming','claimedUnpaid','soldPaid')),
-  public_handle text   -- shown on the piece; set only when the buyer opts in, else null
+  public_handle text,  -- shown on the piece; set only when the buyer opts in, else null
+  -- when this reservation lapses. Public on purpose: it drives the countdown on every
+  -- visitor's card, and a deadline says nothing about who is holding the piece.
+  claim_expires_at timestamptz
 );
 
 create table public.piece_private (
@@ -75,7 +78,9 @@ begin
     return null;
   end if;
 
-  update public.pieces set status = 'claiming'
+  -- 5 minutes to fill the form; must match release-stale-claiming below
+  update public.pieces
+     set status = 'claiming', claim_expires_at = now() + interval '5 minutes'
    where id = p_id and status = 'available';
   if not found then
     return null;            -- someone beat them to it
@@ -103,9 +108,11 @@ begin
   update public.piece_private
      set holder = p_name, holder_ig = nullif(p_ig, ''), size = p_size
    where piece_id = p_id;
+  -- 30 minutes to settle; must match release-expired-unpaid below
   update public.pieces
      set status = 'claimedUnpaid',
-         public_handle = case when p_show_ig then nullif(p_ig, '') else null end
+         public_handle = case when p_show_ig then nullif(p_ig, '') else null end,
+         claim_expires_at = now() + interval '30 minutes'
    where id = p_id;
   return true;
 end $$;
@@ -123,7 +130,9 @@ begin
   ) then
     return false;
   end if;
-  update public.pieces set status = 'available', public_handle = null where id = p_id;
+  update public.pieces
+     set status = 'available', public_handle = null, claim_expires_at = null
+   where id = p_id;
   update public.piece_private
      set holder = null, holder_ig = null, size = null, phone = null,
          address = null, claim_token = null, claimed_at = null, device_id = null
@@ -171,7 +180,8 @@ select cron.schedule('release-expired-unpaid', '* * * * *', $$
     join public.pieces p on p.id = pv.piece_id
     where p.status = 'claimedUnpaid' and pv.claimed_at < now() - interval '30 minutes'
   ), _pub as (
-    update public.pieces set status = 'available', public_handle = null
+    update public.pieces
+       set status = 'available', public_handle = null, claim_expires_at = null
      where id in (select piece_id from expired)
   )
   update public.piece_private
@@ -187,7 +197,7 @@ select cron.schedule('release-stale-claiming', '* * * * *', $$
     join public.pieces p on p.id = pv.piece_id
     where p.status = 'claiming' and pv.claimed_at < now() - interval '5 minutes'
   ), _pub as (
-    update public.pieces set status = 'available'
+    update public.pieces set status = 'available', claim_expires_at = null
      where id in (select piece_id from stale)
   )
   update public.piece_private set claim_token = null, claimed_at = null, device_id = null

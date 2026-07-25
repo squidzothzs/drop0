@@ -114,6 +114,7 @@ export default function AdminPage() {
         <div key={p.id} style={S.row}>
           <span style={S.num}>#{p.num}</span>
           <span style={{ ...S.tag, background: TAG_COLOR[p.status] }}>{p.status}</span>
+          <span style={S.ref}>{p.ref}</span>
           {/* no details yet — they're still on the form */}
           <span style={{ flex: 1, opacity: 0.5 }}>form not submitted</span>
           <button style={S.ghost} onClick={() => post('release', { id: p.id })}>release</button>
@@ -143,6 +144,7 @@ export default function AdminPage() {
         <div key={p.id} style={S.row}>
           <span style={S.num}>#{p.num}</span>
           <span style={{ ...S.tag, background: TAG_COLOR[p.status] }}>{p.status}</span>
+          <span style={S.ref}>{p.ref}</span>
           <span style={{ flex: 1 }}>{p.holder} {p.holder_ig ? `· ${p.holder_ig}` : ''} {p.size ? `· ${p.size}` : ''}</span>
           <button style={S.ghost} onClick={() => post('release', { id: p.id })}>release</button>
         </div>
