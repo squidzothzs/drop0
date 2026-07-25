@@ -179,8 +179,7 @@ export default function ClaimModal({ item, onClose }) {
             <h2 className="claim-headline">Piece #{item.num}</h2>
             <div className="claim-price">HKD 380</div>
             <p className="claim-body">
-              Twenty exist. No restock, no reprint, no second chance.
-              Claim this number and it's struck from the drop — permanently, provably yours.
+              Only twenty exists, no restock, no reprint, claim before its gone.
             </p>
             <div className="claim-btn-row">
               <button className="claim-btn ghost" onClick={() => { playClick(); handleClose() }}>Not this one</button>

@@ -575,7 +575,7 @@ body {
 .card-price {
   font-size: 12px;
   font-weight: 400;
-  color: #111;
+  color: #fff;
 }
 
 /* who claimed it — IG handle shown on the piece */
@@ -820,12 +820,29 @@ select.claim-input option { background: #0d0d0d; color: #fff; }
   cursor: pointer;
   user-select: none;
 }
+/* Hand-drawn our own box: accent-color: #fff made Safari draw a white tick on a
+   white fill — invisible. Chrome contrasts the tick automatically, Safari doesn't,
+   so the only reliable white-box-black-tick is one we paint ourselves. */
 .claim-toggle input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
   width: 17px; height: 17px;
-  margin-top: 1px;
-  accent-color: #fff;
+  margin: 1px 0 0;
+  border: 1px solid #fff;
+  background: transparent;
   cursor: pointer;
   flex-shrink: 0;
+  position: relative;
+}
+.claim-toggle input[type="checkbox"]:checked { background: #fff; }
+.claim-toggle input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px; top: 1px;
+  width: 6px; height: 10px;
+  border: solid #111;
+  border-width: 0 2px 2px 0;
+  transform: rotate(40deg);
 }
 
 /* success — edition number + countdown */
