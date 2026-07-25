@@ -1,10 +1,20 @@
--- Adds pieces.claim_expires_at — the deadline the card countdown ticks down to.
+-- Adds pieces.claim_expires_at — the deadline the card countdown ticks down to —
+-- and pieces.public_name, the display name stamped across a claimed piece.
 -- Additive only: no drops, existing claims survive. Safe to run twice.
 -- Run on BOTH Supabase projects (staging and production).
 -- schema.sql already contains all of this for a fresh setup; this file is only
 -- for a database that is already live.
 
 alter table public.pieces add column if not exists claim_expires_at timestamptz;
+alter table public.pieces add column if not exists public_name text;
+
+-- backfill the name onto pieces already claimed, so their stamp isn't blank
+update public.pieces p
+   set public_name = pv.holder
+  from public.piece_private pv
+ where pv.piece_id = p.id
+   and p.status in ('claimedUnpaid','soldPaid')
+   and p.public_name is null;
 
 -- backfill anything mid-claim right now, so live reservations get a deadline
 -- instead of a blank card
@@ -64,6 +74,7 @@ begin
   -- 30 minutes to settle; must match release-expired-unpaid
   update public.pieces
      set status = 'claimedUnpaid',
+         public_name = p_name,
          public_handle = case when p_show_ig then nullif(p_ig, '') else null end,
          claim_expires_at = now() + interval '30 minutes'
    where id = p_id;
@@ -83,7 +94,8 @@ begin
     return false;
   end if;
   update public.pieces
-     set status = 'available', public_handle = null, claim_expires_at = null
+     set status = 'available', public_name = null, public_handle = null,
+         claim_expires_at = null
    where id = p_id;
   update public.piece_private
      set holder = null, holder_ig = null, size = null, phone = null,
@@ -100,7 +112,8 @@ select cron.schedule('release-expired-unpaid', '* * * * *', $$
     where p.status = 'claimedUnpaid' and pv.claimed_at < now() - interval '30 minutes'
   ), _pub as (
     update public.pieces
-       set status = 'available', public_handle = null, claim_expires_at = null
+       set status = 'available', public_name = null, public_handle = null,
+         claim_expires_at = null
      where id in (select piece_id from expired)
   )
   update public.piece_private

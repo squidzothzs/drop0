@@ -460,7 +460,7 @@ body {
 /* your own piece stays openable, so it stays lit and clickable */
 .item-card.card-mine { cursor: pointer; }
 .item-card.card-mine .card-face img { filter: none; opacity: 1; }
-.item-card.card-mine .taken-cross { display: none; }
+.item-card.card-mine .taken-stamp { display: none; }
 
 .card-thumb {
   width: 100%;
@@ -511,19 +511,34 @@ body {
 .card-sold     .card-face img { filter: grayscale(1) opacity(0.4); }
 .card-reserved .card-face img { opacity: 0.5; }
 
-/* crossed-out ✕ over a SOLD piece — corner-to-corner, thick and clean */
-.taken-cross {
+/* stamped across a SOLD piece like an OUT OF STOCK sticker */
+.taken-stamp {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-11deg);
   z-index: 4;
   pointer-events: none;
-  background:
-    linear-gradient(to top right,
-      transparent calc(50% - 2.5px), #111 calc(50% - 2.5px),
-      #111 calc(50% + 2.5px), transparent calc(50% + 2.5px)),
-    linear-gradient(to bottom right,
-      transparent calc(50% - 2.5px), #111 calc(50% - 2.5px),
-      #111 calc(50% + 2.5px), transparent calc(50% + 2.5px));
+  max-width: 88%;
+  padding: 7px 12px;
+  border: 2px solid #111;
+  background: rgba(255, 255, 255, 0.94);
+  color: #111;
+  font-family: var(--font-head);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.25;
+  /* a long handle wraps instead of bursting out of the card */
+  overflow-wrap: anywhere;
+}
+/* the handle is the point — give it the size, keep "held by" as the label */
+.taken-stamp span {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.06em;
 }
 
 /* reserved pieces pulse softly so "being claimed" reads as live, not dead */
