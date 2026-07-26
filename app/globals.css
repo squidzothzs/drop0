@@ -511,59 +511,6 @@ body {
 .card-sold     .card-face img { filter: grayscale(1) opacity(0.4); }
 .card-reserved .card-face img { opacity: 0.5; }
 
-/* ── rarity borders (game-inventory style) ──────────────
-   The shape is blueborder.png used as an alpha mask — the real hand-drawn
-   outline, ridges and all, so nothing here has to fake one. The colour is a
-   conic gradient underneath: the mask says WHERE paint lands, the gradient says
-   what colour, and rotating --tier-a walks the colour round the frame. */
-@property --tier-a {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-
-.tier-frame {
-  position: absolute;
-  inset: -2px;
-  z-index: 5;
-  pointer-events: none;
-}
-.tier-frame > span {
-  position: absolute;
-  inset: 0;
-  display: block;
-  -webkit-mask: url('/pics/blueborder.png') center / 100% 100% no-repeat;
-          mask: url('/pics/blueborder.png') center / 100% 100% no-repeat;
-  animation: tier-spin 4s linear infinite;
-}
-@keyframes tier-spin {
-  to { --tier-a: 360deg; }
-}
-
-/* stops sampled off the PNG. White sits immediately behind the cyan in the
-   sweep, so it reads as a highlight trailing the blue round the frame rather
-   than a separate flash. */
-.tier-blue .tier-frame > span {
-  background: conic-gradient(from var(--tier-a),
-    #ffffff 0deg, #eafcff 25deg, #7cf0fb 70deg, #22e4f6 140deg,
-    #00d3ec 215deg, #22e4f6 285deg, #a9f4fc 330deg, #ffffff 360deg);
-}
-
-.tier-purple .tier-frame > span {
-  background: conic-gradient(from var(--tier-a),
-    #ffffff 0deg, #f0eaff 25deg, #c4a9ff 70deg, #9160f5 140deg,
-    #7038e0 215deg, #9160f5 285deg, #d6c2ff 330deg, #ffffff 360deg);
-}
-
-.tier-rainbow .tier-frame > span {
-  background: conic-gradient(from var(--tier-a),
-    #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0040ff, #a000ff, #ff0000);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tier-frame > span { animation: none; }
-}
-
 /* caption text laid straight over a SOLD piece — white fill, thick black outline,
    the burnt-in look of a phone video caption. No box, no tilt. */
 .taken-stamp {
@@ -640,7 +587,7 @@ body {
   line-height: 1.4;
   display: block;
 }
-.card-sold .card-name { color: #888; }
+.card-sold .card-name { color: #fff; }
 .card-reserved .card-name { color: #fff; }   /* claiming mode reads on the blur (pc) */
 
 .card-price {
