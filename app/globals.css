@@ -596,6 +596,14 @@ body {
   color: #fff;
 }
 
+/* mobile is one card per row, so the number and price can carry the card the way
+   they do on a poster. Size only — colour and the badge pills stay put.
+   Matches the 480px breakpoint the grid already switches on. */
+@media (max-width: 479px) {
+  .card-name  { font-size: 34px; letter-spacing: 0.02em; line-height: 1.15; }
+  .card-price { font-size: 20px; font-weight: 700; }
+}
+
 /* who claimed it — IG handle shown on the piece */
 .card-claimer {
   font-size: 11px;
@@ -948,3 +956,79 @@ select.claim-input option { background: #0d0d0d; color: #fff; }
   color: #888;
 }
 .claim-order-line:hover { border-color: #666; }
+
+
+/* ─── TERMS PAGE ────────────────────────────────────── */
+.terms-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 56px 20px 80px;
+  color: var(--ink);
+}
+.terms-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+.terms-title {
+  margin: 10px 0 18px;
+  font-family: var(--font-head);
+  font-size: clamp(26px, 6vw, 40px);
+  font-weight: 400;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+.terms-intro {
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+/* the numbers come from the ol, so the headings read as clause 1..9 */
+.terms-list {
+  margin: 28px 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+.terms-list > li h2 {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 7px;
+}
+.terms-list p,
+.terms-list ul li {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #333;
+}
+.terms-list ul {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.terms-foot {
+  margin-top: 40px;
+  padding-top: 18px;
+  border-top: 1px solid #eee;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--grey);
+}
+.terms-foot a { color: var(--ink); }
+
+/* the assent line above the lock-in button */
+.claim-terms {
+  margin: 2px 0 -2px;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: #888;
+}
+.claim-terms a { color: #fff; }

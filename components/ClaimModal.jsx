@@ -31,6 +31,7 @@ export default function ClaimModal({ item, onClose }) {
   // a stored token alone must not count — a stale one would skip claim_piece entirely
   const [reserved, setReserved] = useState(() => holdsReservation(item.status, held))
   const [copied, setCopied] = useState(false)
+  const [confirmCancel, setConfirmCancel] = useState(false) // releasing is destructive — ask twice
   const timerRef = useRef(null)
 
   // What the buyer pastes into the settle DM. Only the piece and the ref — name and
@@ -225,6 +226,12 @@ export default function ClaimModal({ item, onClose }) {
                   />
                 </div>
               )}
+              {/* the assent sits on this button — it's the click that creates the
+                  30-minute obligation, so the line has to be right above it */}
+              <p className="claim-terms">
+                Locking in means you agree to the{' '}
+                <a href="/terms" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a>.
+              </p>
               <div className="claim-btn-row" style={{ marginTop: 4 }}>
                 <button className="claim-btn ghost" onClick={() => { playClick(); setStep(1) }} disabled={busy}>← Back</button>
                 <button
@@ -281,6 +288,19 @@ export default function ClaimModal({ item, onClose }) {
                 >
                   DM @mogi.exists to settle ↗
                 </a>
+                {/* handleClose deliberately keeps a confirmed reservation alive, so
+                    giving it up has to be its own explicit action */}
+                <button
+                  className="claim-btn ghost"
+                  onClick={() => {
+                    playClick()
+                    if (!confirmCancel) { setConfirmCancel(true); return }
+                    releaseClaim(item.id)
+                    onClose()
+                  }}
+                >
+                  {confirmCancel ? `Sure? #${item.num} goes back on the floor` : 'Cancel this claim'}
+                </button>
               </>
             )}
           </div>
