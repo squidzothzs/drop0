@@ -51,6 +51,10 @@ export default function ItemCard({ item, mine = false, now, onClick }) {
             <img src="/pics/shirtback-Photoroom2.png" alt={`MOGI #${num}/20 back`} loading="lazy" width="400" height="400" />
           </div>
         </div>
+        {/* two boxes on purpose: the inner one is masked hollow, the outer one
+            carries the ridge filter. Same element can't do both — CSS runs filter
+            before mask, so the mask would just recut a clean rectangle. */}
+        {tier && <div className="tier-frame" aria-hidden="true"><span /></div>}
         {/* the stamp carries the display name, the line below carries the @handle */}
         {isSold && (
           <div className="taken-stamp" aria-hidden="true">

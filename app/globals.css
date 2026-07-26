@@ -512,97 +512,56 @@ body {
 .card-reserved .card-face img { opacity: 0.5; }
 
 /* ── rarity borders (game-inventory style) ──────────────
-   The frame is a ::before with a gradient background, masked hollow so only the
-   border band paints — that keeps the rounded corners and the transparent middle
-   that border-image can't do. Glow sits on .card-thumb: overflow:hidden clips its
-   children, not its own box-shadow. */
-/* the thumb has to carry the same radius, or its square corners poke out past the
-   rounded frame and show as grey nicks */
-.tier-rainbow .card-thumb,
-.tier-purple  .card-thumb,
-.tier-blue    .card-thumb { border-radius: 10px; }
-
-.tier-rainbow .card-thumb::before,
-.tier-purple  .card-thumb::before,
-.tier-blue    .card-thumb::before {
-  content: '';
-  position: absolute;
-  /* the frame is drawn 6px oversized so the displacement chews on throwaway
-     pixels outside the card; clip-path (which runs after filter) then cuts it
-     back to a straight rectangle. Net: dead-straight outer edge, ridged inner. */
-  inset: -6px;
-  z-index: 5;
-  pointer-events: none;
-  border-radius: 8px;
-  padding: 14px;                /* 6px overhang + 8px visible band */
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  /* the ridged, drawn-by-hand edge (filter lives in layout.js) */
-  filter: url(#tier-ridge);
-  clip-path: inset(6px round 8px);
-}
-
-/* conic, so the spectrum travels around the frame the way it does in the
-   reference — a linear one runs left-to-right and the top and bottom edges
-   come out the same colour */
+   The shape is blueborder.png used as an alpha mask — the real hand-drawn
+   outline, ridges and all, so nothing here has to fake one. The colour is a
+   conic gradient underneath: the mask says WHERE paint lands, the gradient says
+   what colour, and rotating --tier-a walks the colour round the frame. */
 @property --tier-a {
   syntax: '<angle>';
   inherits: false;
   initial-value: 0deg;
 }
-.tier-rainbow .card-thumb::before {
+
+.tier-frame {
+  position: absolute;
+  inset: -2px;
+  z-index: 5;
+  pointer-events: none;
+}
+.tier-frame > span {
+  position: absolute;
+  inset: 0;
+  display: block;
+  -webkit-mask: url('/pics/blueborder.png') center / 100% 100% no-repeat;
+          mask: url('/pics/blueborder.png') center / 100% 100% no-repeat;
+  animation: tier-spin 4s linear infinite;
+}
+@keyframes tier-spin {
+  to { --tier-a: 360deg; }
+}
+
+/* stops sampled off the PNG. White sits immediately behind the cyan in the
+   sweep, so it reads as a highlight trailing the blue round the frame rather
+   than a separate flash. */
+.tier-blue .tier-frame > span {
+  background: conic-gradient(from var(--tier-a),
+    #ffffff 0deg, #eafcff 25deg, #7cf0fb 70deg, #22e4f6 140deg,
+    #00d3ec 215deg, #22e4f6 285deg, #a9f4fc 330deg, #ffffff 360deg);
+}
+
+.tier-purple .tier-frame > span {
+  background: conic-gradient(from var(--tier-a),
+    #ffffff 0deg, #f0eaff 25deg, #c4a9ff 70deg, #9160f5 140deg,
+    #7038e0 215deg, #9160f5 285deg, #d6c2ff 330deg, #ffffff 360deg);
+}
+
+.tier-rainbow .tier-frame > span {
   background: conic-gradient(from var(--tier-a),
     #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0040ff, #a000ff, #ff0000);
-  animation: tier-rainbow 3.5s linear infinite;
 }
-@keyframes tier-rainbow {
-  to { --tier-a: 360deg; }
-}
-.tier-rainbow .card-thumb { box-shadow: 0 0 10px rgba(180, 90, 255, 0.45); }
-
-/* not a two-stop fade — the reference frames bounce between a pale tint and a
-   saturated one several times along the edge, which is what makes them read as
-   mixed rather than as a plain gradient.
-   The first layer is the shine: a conic wedge of white that runs clockwise round
-   the frame and lifts whatever colour it passes over, then leaves it as it was. */
-.tier-purple .card-thumb::before,
-.tier-blue   .card-thumb::before {
-  animation: tier-sweep 3.5s linear infinite;
-}
-@keyframes tier-sweep {
-  to { --tier-a: 360deg; }
-}
-
-.tier-purple .card-thumb::before {
-  background:
-    conic-gradient(from var(--tier-a),
-      rgba(255, 255, 255, 0) 0deg,
-      rgba(255, 255, 255, 0.85) 18deg,
-      rgba(255, 255, 255, 0) 60deg,
-      rgba(255, 255, 255, 0) 360deg),
-    linear-gradient(135deg,
-      #ded3ff 0%, #9d84ef 22%, #c9baff 44%, #8a72e4 66%, #d8ccff 84%, #9782ea 100%);
-}
-.tier-purple .card-thumb { box-shadow: 0 0 10px rgba(150, 120, 245, 0.4); }
-
-.tier-blue .card-thumb::before {
-  background:
-    conic-gradient(from var(--tier-a),
-      rgba(255, 255, 255, 0) 0deg,
-      rgba(255, 255, 255, 0.85) 18deg,
-      rgba(255, 255, 255, 0) 60deg,
-      rgba(255, 255, 255, 0) 360deg),
-    linear-gradient(135deg,
-      #dbf5ff 0%, #6aa8e6 22%, #b5e7fd 44%, #5b91dc 66%, #cdefff 84%, #6fabe8 100%);
-}
-.tier-blue .card-thumb { box-shadow: 0 0 10px rgba(110, 190, 240, 0.4); }
 
 @media (prefers-reduced-motion: reduce) {
-  .tier-rainbow .card-thumb::before,
-  .tier-purple  .card-thumb::before,
-  .tier-blue    .card-thumb::before { animation: none; }
+  .tier-frame > span { animation: none; }
 }
 
 /* caption text laid straight over a SOLD piece — white fill, thick black outline,
