@@ -115,7 +115,10 @@ begin
   -- 30 minutes to settle; must match release-expired-unpaid below
   update public.pieces
      set status = 'claimedUnpaid',
-         public_name = p_name,
+         -- p_show_ig is the whole public identity now, not just the handle: unticking
+         -- "show me" has to hide the name too, or the piece still names them.
+         -- piece_private keeps both regardless — that's what admin ships against.
+         public_name = case when p_show_ig then p_name else null end,
          public_handle = case when p_show_ig then nullif(p_ig, '') else null end,
          claim_expires_at = now() + interval '30 minutes'
    where id = p_id;

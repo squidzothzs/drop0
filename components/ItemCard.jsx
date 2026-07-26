@@ -47,7 +47,11 @@ export default function ItemCard({ item, mine = false, now, onClick }) {
           </div>
         </div>
         {/* the stamp carries the display name, the line below carries the @handle */}
-        {isSold && <div className="taken-stamp" aria-hidden="true">held by<span>{publicName || 'anonymous'}</span></div>}
+        {isSold && (
+          <div className="taken-stamp" aria-hidden="true">
+            held by<br />{publicName || 'anonymous'}
+          </div>
+        )}
       </div>
 
       <div className="card-body">

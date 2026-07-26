@@ -12,6 +12,7 @@ const S = {
   ghost: { fontFamily: 'monospace', fontSize: 11, padding: '5px 10px', border: '1px solid #111', background: '#fff', color: '#111', cursor: 'pointer' },
   input: { fontFamily: 'monospace', fontSize: 14, padding: '10px 12px', border: '1px solid #111', width: '100%', marginBottom: 10 },
   ref: { fontWeight: 900, letterSpacing: '0.08em', border: '1px dashed #bbb', padding: '2px 6px', fontSize: 12 },
+  edit: { fontFamily: 'monospace', fontSize: 12, padding: '3px 6px', border: '1px solid #bbb', minWidth: 0 },
 }
 const TAG_COLOR = { available: '#1d9e5e', claiming: '#d4831f', claimedUnpaid: '#c0392b', soldPaid: '#111' }
 
@@ -20,6 +21,59 @@ const STATUSES = [
   { key: 'open',    label: 'OPEN' },
   { key: 'soldOut', label: 'SOLD OUT' },
 ]
+
+// A row for a piece that has buyer details. Same markup for awaiting-payment and
+// paid, so it lives here once — `actions` is whatever buttons that section needs.
+function PieceRow({ p, onSave, actions }) {
+  const [editing, setEditing] = useState(false)
+  const [f, setF] = useState({ holder: '', holder_ig: '', size: '' })
+
+  // seed from the row each time it opens, so a cancel-then-reopen shows live values
+  const open = () => {
+    setF({ holder: p.holder || '', holder_ig: p.holder_ig || '', size: p.size || '' })
+    setEditing(true)
+  }
+
+  if (!editing) {
+    return (
+      <div style={S.row}>
+        <span style={S.num}>#{p.num}</span>
+        <span style={{ ...S.tag, background: TAG_COLOR[p.status] }}>{p.status}</span>
+        {/* the code they quote in the DM — match this before marking paid */}
+        <span style={S.ref}>{p.ref}</span>
+        <span style={{ flex: 1 }}>{p.holder} {p.holder_ig ? `· @${p.holder_ig}` : ''} {p.size ? `· ${p.size}` : ''}</span>
+        <button style={S.ghost} onClick={open}>edit</button>
+        {actions}
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ ...S.row, flexWrap: 'wrap' }}>
+      <span style={S.num}>#{p.num}</span>
+      <input style={{ ...S.edit, flex: 2 }} placeholder="name"
+        value={f.holder} onChange={e => setF({ ...f, holder: e.target.value })} autoFocus />
+      <input style={{ ...S.edit, flex: 2 }} placeholder="instagram"
+        value={f.holder_ig} onChange={e => setF({ ...f, holder_ig: e.target.value })} />
+      <input style={{ ...S.edit, flex: 1 }} placeholder="size"
+        value={f.size} onChange={e => setF({ ...f, size: e.target.value })} />
+      <button
+        style={S.btn}
+        disabled={!f.holder.trim()}
+        onClick={async () => { await onSave({ id: p.id, ...f }); setEditing(false) }}
+      >
+        save
+      </button>
+      <button style={S.ghost} onClick={() => setEditing(false)}>cancel</button>
+      {/* a piece claimed anonymously has no public columns to write to, so edits
+          here stay private — say so rather than let it look like a bug */}
+      <div style={{ flexBasis: '100%', fontSize: 10, opacity: 0.5, paddingTop: 4 }}>
+        the @ is optional · shipping record always updates{p.publicName == null && p.publicHandle == null
+          ? ' · claimed anonymously, nothing shows on the piece' : ''}
+      </div>
+    </div>
+  )
+}
 
 export default function AdminPage() {
   const [password, setPassword] = useState('')
@@ -126,28 +180,18 @@ export default function AdminPage() {
       </div>
       {claimed.length === 0 && <div style={{ ...S.row, opacity: 0.5 }}>none</div>}
       {claimed.map(p => (
-        <div key={p.id} style={S.row}>
-          <span style={S.num}>#{p.num}</span>
-          <span style={{ ...S.tag, background: TAG_COLOR[p.status] }}>{p.status}</span>
-          {/* the code they quote in the DM — match this before marking paid */}
-          <span style={S.ref}>{p.ref}</span>
-          <span style={{ flex: 1 }}>{p.holder} {p.holder_ig ? `· ${p.holder_ig}` : ''} {p.size ? `· ${p.size}` : ''}</span>
+        <PieceRow key={p.id} p={p} onSave={body => post('edit', body)} actions={<>
           <button style={S.btn} onClick={() => post('mark-paid', { id: p.id })}>mark paid</button>
           <button style={S.ghost} onClick={() => post('release', { id: p.id })}>release</button>
-        </div>
+        </>} />
       ))}
 
       <div style={{ fontSize: 11, opacity: 0.6, margin: '22px 0 4px', letterSpacing: '0.1em' }}>
         PAID ({sold.length}/20)
       </div>
       {sold.map(p => (
-        <div key={p.id} style={S.row}>
-          <span style={S.num}>#{p.num}</span>
-          <span style={{ ...S.tag, background: TAG_COLOR[p.status] }}>{p.status}</span>
-          <span style={S.ref}>{p.ref}</span>
-          <span style={{ flex: 1 }}>{p.holder} {p.holder_ig ? `· ${p.holder_ig}` : ''} {p.size ? `· ${p.size}` : ''}</span>
-          <button style={S.ghost} onClick={() => post('release', { id: p.id })}>release</button>
-        </div>
+        <PieceRow key={p.id} p={p} onSave={body => post('edit', body)}
+          actions={<button style={S.ghost} onClick={() => post('release', { id: p.id })}>release</button>} />
       ))}
     </div>
   )

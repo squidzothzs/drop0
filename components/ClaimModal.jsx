@@ -17,8 +17,8 @@ export default function ClaimModal({ item, onClose }) {
   const [showBack, setShowBack] = useState(false)
   const [name, setName] = useState('')
   const [size, setSize] = useState('M')
-  const [ig, setIg] = useState('')
-  const [showIg, setShowIg] = useState(true) // default shown; untick to stay anonymous
+  const [ig, setIg] = useState('@') // the @ is pre-typed so nobody wonders whether to add it
+  const [anon, setAnon] = useState(false) // ticked = nothing public; the handle is still collected
   // resume the real countdown on reopen — `at` is when the reservation started
   const [remaining, setRemaining] = useState(() =>
     held?.at ? Math.max(0, COUNTDOWN_SECS - Math.floor((Date.now() - held.at) / 1000)) : COUNTDOWN_SECS
@@ -31,6 +31,7 @@ export default function ClaimModal({ item, onClose }) {
   // a stored token alone must not count — a stale one would skip claim_piece entirely
   const [reserved, setReserved] = useState(() => holdsReservation(item.status, held))
   const [copied, setCopied] = useState(false)
+  const [confirmCancel, setConfirmCancel] = useState(false) // releasing is destructive — ask twice
   const timerRef = useRef(null)
 
   // What the buyer pastes into the settle DM. Only the piece and the ref — name and
@@ -74,15 +75,19 @@ export default function ClaimModal({ item, onClose }) {
     return () => clearInterval(timerRef.current)
   }, [step, item.id, releaseClaim])
 
+  // store the bare handle — the @ is a typing affordance, not part of the name
+  const handle = ig.trim().replace(/^@+/, '')
+  const canLockIn = !!name.trim() && !!handle && !busy
+
   const handleConfirm = useCallback(async () => {
-    if (!name.trim() || busy) return
+    if (!canLockIn) return
     setBusy(true)
-    const { ok } = await confirmClaim(item.id, { name: name.trim(), ig: ig.trim(), showIg, size })
+    const { ok } = await confirmClaim(item.id, { name: name.trim(), ig: handle, showIg: !anon, size })
     setBusy(false)
     if (!ok) { setGone(true); return } // reservation lapsed before confirming
     playSuccess()
     setStep(3)
-  }, [name, ig, showIg, size, item.id, confirmClaim, busy])
+  }, [canLockIn, name, handle, anon, size, item.id, confirmClaim])
 
   const handleClose = useCallback(() => {
     // release only an unconfirmed/expired reservation; a paid-pending claim stays
@@ -211,27 +216,32 @@ export default function ClaimModal({ item, onClose }) {
                   {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
+              {/* always asked — it's how we reach you in the DM, even when it stays private */}
+              <div className="claim-field">
+                <label className="claim-label" htmlFor="claim-ig">Instagram *</label>
+                <input
+                  id="claim-ig" className="claim-input" type="text" maxLength={32}
+                  placeholder="@handle"
+                  value={ig} onChange={e => setIg(e.target.value)}
+                />
+              </div>
               <label className="claim-toggle">
-                <input type="checkbox" checked={showIg} onChange={e => setShowIg(e.target.checked)} />
-                Show my Instagram on the piece — otherwise it reads “held by anonymous”
+                <input type="checkbox" checked={anon} onChange={e => setAnon(e.target.checked)} />
+                Don’t show my name and Instagram handle — the piece reads “held by anonymous”
               </label>
-              {showIg && (
-                <div className="claim-field">
-                  <label className="claim-label" htmlFor="claim-ig">Instagram</label>
-                  <input
-                    id="claim-ig" className="claim-input" type="text" maxLength={32}
-                    placeholder="@handle"
-                    value={ig} onChange={e => setIg(e.target.value)}
-                  />
-                </div>
-              )}
+              {/* the assent sits on this button — it's the click that creates the
+                  30-minute obligation, so the line has to be right above it */}
+              <p className="claim-terms">
+                Locking in means you agree to the{' '}
+                <a href="/terms" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a>.
+              </p>
               <div className="claim-btn-row" style={{ marginTop: 4 }}>
                 <button className="claim-btn ghost" onClick={() => { playClick(); setStep(1) }} disabled={busy}>← Back</button>
                 <button
                   className="claim-btn solid"
                   onClick={handleConfirm}
-                  disabled={!name.trim() || busy}
-                  style={{ opacity: name.trim() && !busy ? 1 : 0.45 }}
+                  disabled={!canLockIn}
+                  style={{ opacity: canLockIn ? 1 : 0.45 }}
                 >
                   {busy ? 'Locking in…' : `Lock in #${item.num}`}
                 </button>
@@ -281,6 +291,19 @@ export default function ClaimModal({ item, onClose }) {
                 >
                   DM @mogi.exists to settle ↗
                 </a>
+                {/* handleClose deliberately keeps a confirmed reservation alive, so
+                    giving it up has to be its own explicit action */}
+                <button
+                  className="claim-btn ghost"
+                  onClick={() => {
+                    playClick()
+                    if (!confirmCancel) { setConfirmCancel(true); return }
+                    releaseClaim(item.id)
+                    onClose()
+                  }}
+                >
+                  {confirmCancel ? `Sure? #${item.num} goes back on the floor` : 'Cancel this claim'}
+                </button>
               </>
             )}
           </div>
