@@ -3,8 +3,13 @@ import { useCallback } from 'react'
 import { playClick } from '../lib/audio'
 import { secsLeft, fmt } from '../lib/countdown'
 
+// ponytail: hardcoded test map. If borders become a real feature they move to a
+// `tier` column on pieces and this goes away.
+const TEST_TIERS = { 1: 'rainbow', 2: 'rainbow', 3: 'purple', 4: 'blue' }
+
 export default function ItemCard({ item, mine = false, now, onClick }) {
-  const { num, status, publicName, publicHandle } = item
+  const { id, num, status, publicName, publicHandle } = item
+  const tier = TEST_TIERS[id]
   const isSold      = status === 'soldPaid'
   const isAvailable = status === 'available'
   const isReserved  = status === 'claiming' || status === 'claimedUnpaid' // unclickable, no cross
@@ -26,7 +31,7 @@ export default function ItemCard({ item, mine = false, now, onClick }) {
 
   return (
     <div
-      className={`item-card${isSold ? ' card-sold' : ''}${isReserved ? ' card-reserved' : ''}${mine ? ' card-mine' : ''}`}
+      className={`item-card${isSold ? ' card-sold' : ''}${isReserved ? ' card-reserved' : ''}${mine ? ' card-mine' : ''}${tier ? ` tier-${tier}` : ''}`}
       onClick={handleClick}
       role={canOpen ? 'button' : undefined}
       tabIndex={canOpen ? 0 : undefined}
@@ -47,7 +52,11 @@ export default function ItemCard({ item, mine = false, now, onClick }) {
           </div>
         </div>
         {/* the stamp carries the display name, the line below carries the @handle */}
-        {isSold && <div className="taken-stamp" aria-hidden="true">held by<span>{publicName || 'anonymous'}</span></div>}
+        {isSold && (
+          <div className="taken-stamp" aria-hidden="true">
+            held by<br />{publicName || 'anonymous'}
+          </div>
+        )}
       </div>
 
       <div className="card-body">

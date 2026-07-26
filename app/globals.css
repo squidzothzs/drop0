@@ -511,34 +511,131 @@ body {
 .card-sold     .card-face img { filter: grayscale(1) opacity(0.4); }
 .card-reserved .card-face img { opacity: 0.5; }
 
-/* stamped across a SOLD piece like an OUT OF STOCK sticker */
+/* ── rarity borders (game-inventory style) ──────────────
+   The frame is a ::before with a gradient background, masked hollow so only the
+   border band paints — that keeps the rounded corners and the transparent middle
+   that border-image can't do. Glow sits on .card-thumb: overflow:hidden clips its
+   children, not its own box-shadow. */
+/* the thumb has to carry the same radius, or its square corners poke out past the
+   rounded frame and show as grey nicks */
+.tier-rainbow .card-thumb,
+.tier-purple  .card-thumb,
+.tier-blue    .card-thumb { border-radius: 10px; }
+
+.tier-rainbow .card-thumb::before,
+.tier-purple  .card-thumb::before,
+.tier-blue    .card-thumb::before {
+  content: '';
+  position: absolute;
+  /* the frame is drawn 6px oversized so the displacement chews on throwaway
+     pixels outside the card; clip-path (which runs after filter) then cuts it
+     back to a straight rectangle. Net: dead-straight outer edge, ridged inner. */
+  inset: -6px;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: 8px;
+  padding: 14px;                /* 6px overhang + 8px visible band */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  /* the ridged, drawn-by-hand edge (filter lives in layout.js) */
+  filter: url(#tier-ridge);
+  clip-path: inset(6px round 8px);
+}
+
+/* conic, so the spectrum travels around the frame the way it does in the
+   reference — a linear one runs left-to-right and the top and bottom edges
+   come out the same colour */
+@property --tier-a {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.tier-rainbow .card-thumb::before {
+  background: conic-gradient(from var(--tier-a),
+    #ff0000, #ff8000, #ffff00, #00ff00, #00ffff, #0040ff, #a000ff, #ff0000);
+  animation: tier-rainbow 3.5s linear infinite;
+}
+@keyframes tier-rainbow {
+  to { --tier-a: 360deg; }
+}
+.tier-rainbow .card-thumb { box-shadow: 0 0 10px rgba(180, 90, 255, 0.45); }
+
+/* not a two-stop fade — the reference frames bounce between a pale tint and a
+   saturated one several times along the edge, which is what makes them read as
+   mixed rather than as a plain gradient.
+   The first layer is the shine: a conic wedge of white that runs clockwise round
+   the frame and lifts whatever colour it passes over, then leaves it as it was. */
+.tier-purple .card-thumb::before,
+.tier-blue   .card-thumb::before {
+  animation: tier-sweep 3.5s linear infinite;
+}
+@keyframes tier-sweep {
+  to { --tier-a: 360deg; }
+}
+
+.tier-purple .card-thumb::before {
+  background:
+    conic-gradient(from var(--tier-a),
+      rgba(255, 255, 255, 0) 0deg,
+      rgba(255, 255, 255, 0.85) 18deg,
+      rgba(255, 255, 255, 0) 60deg,
+      rgba(255, 255, 255, 0) 360deg),
+    linear-gradient(135deg,
+      #ded3ff 0%, #9d84ef 22%, #c9baff 44%, #8a72e4 66%, #d8ccff 84%, #9782ea 100%);
+}
+.tier-purple .card-thumb { box-shadow: 0 0 10px rgba(150, 120, 245, 0.4); }
+
+.tier-blue .card-thumb::before {
+  background:
+    conic-gradient(from var(--tier-a),
+      rgba(255, 255, 255, 0) 0deg,
+      rgba(255, 255, 255, 0.85) 18deg,
+      rgba(255, 255, 255, 0) 60deg,
+      rgba(255, 255, 255, 0) 360deg),
+    linear-gradient(135deg,
+      #dbf5ff 0%, #6aa8e6 22%, #b5e7fd 44%, #5b91dc 66%, #cdefff 84%, #6fabe8 100%);
+}
+.tier-blue .card-thumb { box-shadow: 0 0 10px rgba(110, 190, 240, 0.4); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tier-rainbow .card-thumb::before,
+  .tier-purple  .card-thumb::before,
+  .tier-blue    .card-thumb::before { animation: none; }
+}
+
+/* caption text laid straight over a SOLD piece — white fill, thick black outline,
+   the burnt-in look of a phone video caption. No box, no tilt. */
 .taken-stamp {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(-11deg);
+  /* scaleX stretches the letterforms wide like a heat-pressed transfer — Archivo
+     is loaded on the weight axis only, so there's no real width axis to reach for */
+  transform: translate(-50%, -50%) scaleX(1.22);
   z-index: 4;
   pointer-events: none;
-  max-width: 88%;
-  padding: 7px 12px;
-  border: 2px solid #111;
-  background: rgba(255, 255, 255, 0.94);
-  color: #111;
-  font-family: var(--font-head);
-  font-size: 9px;
+  /* 82% × 1.22 ≈ the full card, so the stretch doesn't push past the edge */
+  width: 82%;
+  color: #fff;
+  /* Archivo 900, not Anton — the reference is a wide grotesque, not condensed */
+  font-family: var(--font-sans);
   font-weight: 900;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-size: clamp(17px, 6.3vw, 30px);
+  /* the stretch already opens the letters up; pull them back together so they
+     crowd the way pressed vinyl does */
+  letter-spacing: -0.03em;
+  line-height: 1.0;
   text-align: center;
-  line-height: 1.25;
-  /* a long handle wraps instead of bursting out of the card */
+  text-transform: lowercase;
+  /* stroke painted under the fill, so the outline hugs the letters instead of
+     eating into them */
+  -webkit-text-stroke: 6px #000;
+  paint-order: stroke fill;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  /* a long name wraps instead of bursting out of the card */
   overflow-wrap: anywhere;
-}
-/* the handle is the point — give it the size, keep "held by" as the label */
-.taken-stamp span {
-  display: block;
-  font-size: 13px;
-  letter-spacing: 0.06em;
 }
 
 /* reserved pieces pulse softly so "being claimed" reads as live, not dead */
