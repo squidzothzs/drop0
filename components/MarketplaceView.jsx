@@ -34,9 +34,14 @@ export default function MarketplaceView() {
 
         <div className="market-status-strip">
           <span className={`status-dot${isSoldOut ? ' grey' : ''}`} />
+          {/* nothing left says SOLD OUT even while the status is still 'open' —
+              "0 LEFT OF 20" is the same fact worded like there's still a chance.
+              The dot keeps its red blink; only the grey soldOut screen stills it. */}
           {isSoldOut
             ? 'SOLD OUT · 0 OF 20'
-            : `${remainingCount} LEFT OF 20 · DROP 0`}
+            : remainingCount === 0
+              ? 'SOLD OUT'
+              : `${remainingCount} LEFT OF 20 · DROP 0`}
         </div>
 
         <main className="market-grid-wrap">
