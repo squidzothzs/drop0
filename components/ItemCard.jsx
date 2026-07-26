@@ -70,11 +70,14 @@ export default function ItemCard({ item, mine = false, now, onClick }) {
         <span className="card-name">MOGI #{num} / 20</span>
 
         {isAvailable && <div className="card-price">HKD 380</div>}
-        {mine && !isAvailable && <div className="card-claimer">yours · tap to open</div>}
-        {!mine && isReserved && (
+        {/* the holder sees the same held-by line everyone else does — it's their
+            piece on the public registry, so showing them something different
+            hides what the world actually sees. The 'yours' line sits under it. */}
+        {isReserved && (
           <div className="card-claimer">{hasDetails ? `held by ${claimer}` : 'being claimed…'}</div>
         )}
-        {!mine && isSold && <div className="card-claimer">held by {claimer}</div>}
+        {isSold && <div className="card-claimer">held by {claimer}</div>}
+        {mine && !isAvailable && <div className="card-yours">yours · tap to open</div>}
       </div>
     </div>
   )
