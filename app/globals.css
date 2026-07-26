@@ -1,6 +1,5 @@
 /* Brand type (Google Fonts): Anton = heavy condensed drop-poster display,
-   Archivo = clean grotesque for UI/body. @import must stay at the top.
-   Desktop keeps these; phones swap to the system face below. */
+   Archivo = clean grotesque for UI/body. @import must stay at the top. */
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800;900&display=swap');
 
 /* ─── TOKENS ────────────────────────────────────────── */
@@ -12,18 +11,6 @@
 
   --font-sans: 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-head: 'Anton', 'Archivo', Arial, sans-serif;
-}
-
-/* Phones get SF Pro. Apple doesn't license it for web download, so we ask the OS
-   for it: -apple-system resolves to SF Pro Text/Display on Apple devices and picks
-   the optical size itself. Android lands on Roboto. Every font-family in this file
-   reads these two vars, so overriding them here is the whole switch.
-   479px is the breakpoint the grid already flips on — keep them in step. */
-@media (max-width: 479px) {
-  :root {
-    --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-head: var(--font-sans);
-  }
 }
 
 /* ─── RESET ─────────────────────────────────────────── */
@@ -593,7 +580,7 @@ body {
 .card-name {
   font-family: var(--font-head);
   font-size: 13px;
-  font-weight: 400; /* Anton ships one weight and it's black */
+  font-weight: 400;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #111;
@@ -613,8 +600,7 @@ body {
    they do on a poster. Size only — colour and the badge pills stay put.
    Matches the 480px breakpoint the grid already switches on. */
 @media (max-width: 479px) {
-  /* SF Pro has real weights, so 400 here would read thin where Anton read black */
-  .card-name  { font-size: 34px; font-weight: 700; letter-spacing: 0.02em; line-height: 1.15; }
+  .card-name  { font-size: 34px; letter-spacing: 0.02em; line-height: 1.15; }
   .card-price { font-size: 20px; font-weight: 700; }
 }
 
@@ -994,8 +980,6 @@ select.claim-input option { background: #0d0d0d; color: #fff; }
   line-height: 1.05;
   text-transform: uppercase;
 }
-/* same reason as .card-name — SF Pro's 400 is a real 400 */
-@media (max-width: 479px) { .terms-title { font-weight: 800; } }
 .terms-intro {
   margin: 18px 0;
   font-size: 14px;
