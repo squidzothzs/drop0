@@ -460,7 +460,6 @@ body {
 /* your own piece stays openable, so it stays lit and clickable */
 .item-card.card-mine { cursor: pointer; }
 .item-card.card-mine .card-face img { filter: none; opacity: 1; }
-.item-card.card-mine .taken-stamp { display: none; }
 
 .card-thumb {
   width: 100%;
@@ -610,6 +609,16 @@ body {
   font-weight: 400;
   color: #fff;
   word-break: break-word;
+}
+/* sits under the held-by line on the holder's own piece — quieter than it, so the
+   two stacked lines read as caption + hint rather than two competing facts */
+.card-yours {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--green);
+  padding-top: 2px;
 }
 /* how long this reservation has left before the piece returns to the floor */
 .card-timer {
