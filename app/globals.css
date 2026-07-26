@@ -34,6 +34,35 @@ body {
 /* ─── UTILITY ───────────────────────────────────────── */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
+/* ─── SITE NOTICE (support banner) ──────────────────── */
+/* fixed, not sticky: every screen is its own full-height flex layout, so a
+   sticky bar would push the closed/live art off-centre. z-index clears the
+   floating tees and the gate art but stays under the claim modal (100). */
+.site-notice {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  padding: 7px 14px;
+  background: var(--heat);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+}
+.site-notice strong { font-weight: 900; }
+.site-notice a {
+  color: #fff;
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap; /* a handle broken across two lines reads as two handles */
+}
+
 /* ─── FLOATING TEES BACKGROUND (gate screens only) ──── */
 .tee-bg {
   position: fixed;
