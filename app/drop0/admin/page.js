@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '../../lib/supabase'
+import { supabase } from '../../../lib/supabase'
 
 const S = {
   page: { maxWidth: 720, margin: '0 auto', padding: '32px 16px', fontFamily: 'monospace', color: '#111' },

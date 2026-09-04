@@ -233,7 +233,7 @@ export default function ClaimModal({ item, onClose }) {
                   30-minute obligation, so the line has to be right above it */}
               <p className="claim-terms">
                 Locking in means you agree to the{' '}
-                <a href="/terms" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a>.
+                <a href="/drop0/terms" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a>.
               </p>
               <div className="claim-btn-row" style={{ marginTop: 4 }}>
                 <button className="claim-btn ghost" onClick={() => { playClick(); setStep(1) }} disabled={busy}>← Back</button>

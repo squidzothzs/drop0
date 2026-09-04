@@ -1,10 +1,10 @@
 'use client'
 import { useState } from 'react'
-import { useStore, StoreProvider } from '../lib/useStore'
-import SiteClosedView from '../components/SiteClosedView'
-import LiveView from '../components/LiveView'
-import MarketplaceView from '../components/MarketplaceView'
-import BgMusic from '../components/BgMusic'
+import { useStore, StoreProvider } from '../../lib/useStore'
+import SiteClosedView from '../../components/SiteClosedView'
+import LiveView from '../../components/LiveView'
+import MarketplaceView from '../../components/MarketplaceView'
+import BgMusic from '../../components/BgMusic'
 
 function App() {
   const { appState } = useStore().state
