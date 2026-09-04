@@ -502,7 +502,7 @@ em{font-style:normal;color:var(--flag);font-weight:600}
   border-top:1px solid rgba(246,243,236,.24)}
 .drop-out .lede{color:rgba(246,243,236,.84)}
 .drop-out .btn{margin-top:24px}
-.drop-out .btn+.btn{margin-left:18px}
+.drop-hero__txt .btn{margin-top:28px}
 .view--drop .kicker{color:var(--lamp)}
 
 /* ================================================================
