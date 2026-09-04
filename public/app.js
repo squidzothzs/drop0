@@ -6,12 +6,12 @@ const HOLDERS = Array.from({ length: 20 }, (_, i) => ({
   name: 'Anonymous',
 }));
 
-/* ---- EDIT ME: the four in the boat. ---- */
+/* The four seats. One filled, three open — see the crewmates chapter. */
 const CREW = [
-  { role: 'FOUNDER',      name: '[Name]', bio: '[EDIT] Started the notebook. Draws the face over and over until it looks right.' },
-  { role: 'DESIGN',       name: '[Name]', bio: '[EDIT] Turns the sketch into a garment — patterns, weights, placement.' },
-  { role: 'PRODUCTION',   name: '[Name]', bio: '[EDIT] Talks to the factories. Makes sure the stitching survives a wash.' },
-  { role: 'IMAGE',        name: '[Name]', bio: '[EDIT] Shoots it, edits it, makes people stop scrolling.' },
+  { role: 'DIRECTION',  bio: 'Drawing, art direction and every graphic MOGI puts out. Filled.' },
+  { role: 'DESIGN',     bio: 'Seat open. Patterns, weights and placement - turning drawings into garments.' },
+  { role: 'PRODUCTION', bio: 'Seat open. Sourcing, sampling, print and quality control.' },
+  { role: 'IMAGE',      bio: 'Seat open. Photography, styling and how each drop is shot.' },
 ];
 
 /* ---------------- router ---------------- */
@@ -44,7 +44,6 @@ function openCrew(i) {
   const c = CREW[i];
   if (!c) return;
   ccRole.textContent = c.role;
-  ccName.textContent = c.name;
   ccBio.textContent = c.bio;
   card.hidden = false;
   document.querySelectorAll('.crew-hit').forEach(h => h.classList.toggle('is-sel', +h.dataset.crew === i));
