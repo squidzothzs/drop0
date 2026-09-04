@@ -40,9 +40,15 @@ document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => showChapte
 
 /* ---------------- crewmate cards ---------------- */
 const card = document.getElementById('crewCard');
+function closeCrew() {
+  card.hidden = true;
+  document.querySelectorAll('.crew-hit').forEach(h => h.classList.remove('is-sel'));
+}
+
 function openCrew(i, el) {
   const c = CREW[i];
   if (!c) return;
+  if (!card.hidden && el.classList.contains('is-sel')) return closeCrew();   // same seat again = close
   ccRole.textContent = c.role;
   ccBio.textContent = c.bio;
   card.hidden = false;                       // unhide first so the card can be measured
@@ -63,10 +69,7 @@ document.querySelectorAll('.crew-hit').forEach(h => {
   h.addEventListener('click', open);
   h.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
 });
-document.querySelector('.crew-card__x').onclick = () => {
-  card.hidden = true;
-  document.querySelectorAll('.crew-hit').forEach(h => h.classList.remove('is-sel'));
-};
+document.querySelector('.crew-card__x').onclick = closeCrew;
 
 /* ---------------- holder registry ---------------- */
 document.getElementById('registry').innerHTML =
