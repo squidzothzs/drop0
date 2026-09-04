@@ -40,16 +40,26 @@ document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => showChapte
 
 /* ---------------- crewmate cards ---------------- */
 const card = document.getElementById('crewCard');
-function openCrew(i) {
+function openCrew(i, el) {
   const c = CREW[i];
   if (!c) return;
   ccRole.textContent = c.role;
   ccBio.textContent = c.bio;
-  card.hidden = false;
+  card.hidden = false;                       // unhide first so the card can be measured
+  // park it just above the crewmate that was tapped, kept inside the sea.
+  // .sea is scaled mid-flood, so divide the measured offsets back out by that scale.
+  const sea = card.parentElement;
+  const box = sea.getBoundingClientRect();
+  const k = box.width / sea.offsetWidth || 1;
+  const hit = el.getBoundingClientRect();
+  const x = (hit.left - box.left + hit.width / 2) / k - card.offsetWidth / 2;
+  const y = (hit.top - box.top) / k - card.offsetHeight - 14;
+  card.style.left = Math.max(12, Math.min(x, sea.offsetWidth - card.offsetWidth - 12)) + 'px';
+  card.style.top = Math.max(12, y) + 'px';
   document.querySelectorAll('.crew-hit').forEach(h => h.classList.toggle('is-sel', +h.dataset.crew === i));
 }
 document.querySelectorAll('.crew-hit').forEach(h => {
-  const open = () => openCrew(+h.dataset.crew);
+  const open = () => openCrew(+h.dataset.crew, h);
   h.addEventListener('click', open);
   h.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
 });

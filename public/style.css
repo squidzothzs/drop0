@@ -390,11 +390,12 @@ em{font-style:normal;color:var(--flag);font-weight:600}
 .crew-hit.is-sel use{fill:var(--lamp)}
 
 .crew-card{
-  position:absolute;right:clamp(16px,3vw,34px);top:clamp(16px,3vw,34px);z-index:6;
+  position:absolute;left:0;top:0;z-index:6;
   width:min(300px,72vw);background:var(--paper);border:2px solid var(--ink);
   box-shadow:6px 6px 0 var(--lamp);padding:24px;animation:swipe .3s var(--ease);
 ;border-radius:var(--sketch-a)}
-.crew-card__x{position:absolute;top:10px;right:12px;background:none;border:0;cursor:pointer;font-size:14px}
+.crew-card__x{position:absolute;top:0;right:0;width:44px;height:44px;background:none;border:0;
+  cursor:pointer;font-size:14px;line-height:44px}   /* 44px so it can actually be tapped */
 .crew-card p.mono{font-size:10px;letter-spacing:.2em;color:var(--pop-red)}
 .crew-card #ccBio{margin-top:10px;font-size:15px;color:var(--graphite)}
 .ch__nav--sea{max-width:1280px;margin-inline:auto}
@@ -591,15 +592,21 @@ body.sea-mode .sea__copy>*:nth-child(5){animation-delay:.82s}
   .worn figure+figure{border-left:0;border-top:var(--rule)}
   .sea{min-height:auto;display:block}
   .sea::before{background:linear-gradient(180deg,rgba(9,16,32,0) 40%,rgba(9,16,32,.92) 62%)}
-  .sea__svg{position:relative;width:100%;height:auto;aspect-ratio:1200/620}
+  .sea__svg{position:relative;width:100%;height:auto;aspect-ratio:1/1}
   .sea__copy{padding:24px;max-width:none}
-  .crew-card{position:static;width:auto;margin:0 24px 24px}
+  .crew-card{width:min(270px,78vw);padding:18px}
   .foot__legal{margin-left:0;width:100%}
   body.sea-mode .sea{min-height:auto}
 }
 @media(max-width:520px){
   .menu__row{flex-direction:column}
   .stock-grid{grid-template-columns:1fr}
+}
+
+@media(hover:none){
+  .btn,.rail__dot,.crew-hit,.crew-card__x{-webkit-tap-highlight-color:transparent}
+  .worn figure img,.trip--photo img{filter:none}
+  .worn figure::after,.trip--photo figure::after{opacity:0}
 }
 
 @media(prefers-reduced-motion:reduce){
