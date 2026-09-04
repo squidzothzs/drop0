@@ -15,7 +15,7 @@ const CREW = [
 ];
 
 /* ---------------- router ---------------- */
-const ROUTES = { '': 'v-menu', '/': 'v-menu', '/about': 'v-about', '/stock': 'v-stock', '/owner': 'v-owner' };
+const ROUTES = { '': 'v-menu', '/': 'v-menu', '/about': 'v-about', '/stock': 'v-stock', '/owner': 'v-owner', '/drop0': 'v-drop0' };
 
 function route() {
   const id = ROUTES[location.hash.slice(1)] || 'v-menu';
