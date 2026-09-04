@@ -334,20 +334,11 @@ em{font-style:normal;color:var(--flag);font-weight:600}
   font-family:var(--hand);font-size:16px;text-transform:lowercase;background:var(--paper)}
 .trip--photo figcaption span{display:block;margin-top:6px;font-family:'Archivo',sans-serif;
   font-size:14px;line-height:1.45;color:var(--graphite);text-transform:none}
+/* three phases, same panel grid the photographs use */
+.trip--phase{grid-template-columns:repeat(3,1fr)}
+.trip--phase .kicker{margin-bottom:12px}
+.trip--phase p:not(.kicker){font-size:16px;line-height:1.55;color:var(--graphite)}
 @media(max-width:820px){.trip--photo{grid-template-columns:1fr}}
-
-/* caption burned into the picture, like the screen-recorded artwork */
-.burn{position:relative;margin-top:clamp(30px,4vw,52px);border:var(--rule);
-  overflow:hidden;background:var(--wall-2)}
-.burn img{width:100%;aspect-ratio:21/9;object-fit:cover;object-position:center 28%;
-  filter:grayscale(1) contrast(1.05) brightness(.9)}
-.burn__cap{
-  position:absolute;left:0;right:0;bottom:0;
-  padding:clamp(26px,5vw,56px) clamp(20px,4vw,48px) clamp(18px,3vw,32px);
-  font-family:var(--note);font-size:clamp(19px,2.8vw,32px);line-height:1.25;
-  color:#fff;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.7);
-  background:linear-gradient(180deg,transparent,rgba(0,0,0,.62));
-}
 
 /* nothing on this page shouts in caps */
 #v-about .rail__dot{text-transform:lowercase;font-size:16px}
