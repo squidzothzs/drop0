@@ -71,6 +71,7 @@ em{font-style:normal;color:var(--flag);font-weight:600}
   -webkit-mask:var(--stroke) no-repeat left bottom/100% 100%;
           mask:var(--stroke) no-repeat left bottom/100% 100%;
 }
+#v-about .section-h{margin-bottom:18px}
 .note{font-family:var(--note);font-size:clamp(19px,2.4vw,26px);line-height:1.35;color:var(--graphite)}
 
 /* ================================================================
@@ -334,10 +335,6 @@ em{font-style:normal;color:var(--flag);font-weight:600}
   font-family:var(--hand);font-size:16px;text-transform:lowercase;background:var(--paper)}
 .trip--photo figcaption span{display:block;margin-top:6px;font-family:'Archivo',sans-serif;
   font-size:14px;line-height:1.45;color:var(--graphite);text-transform:none}
-/* three phases, same panel grid the photographs use */
-.trip--phase{grid-template-columns:repeat(3,1fr)}
-.trip--phase .kicker{margin-bottom:12px}
-.trip--phase p:not(.kicker){font-size:16px;line-height:1.55;color:var(--graphite)}
 @media(max-width:820px){.trip--photo{grid-template-columns:1fr}}
 
 /* nothing on this page shouts in caps */
